@@ -28,7 +28,7 @@ Long form commands
 DELETE_COMMAND = "rm -rf "
 RSYNC_COMMAND = "rsync --archive --compress --partial "
 RSYNC_CHMOD = " --chmod "
-RSYNC_EXCLUDE = " --exclude .git --exclude .bashrc "
+RSYNC_EXCLUDE = " --exclude .git --exclude .bashrc --exclude devel --exclude build "
 RSYNC_SUDO = " --rsync-path=\"sudo rsync\" "
 SUDO = "sudo "
 

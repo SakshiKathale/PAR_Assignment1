@@ -25,6 +25,12 @@ build-*/
 CMakeFiles/*
 __pycache__/*
 
+# ROS folders
+melodic_workspace/.catkin*
+melodic_workspace/build
+melodic_workspace/devel
+melodic_workspace/src/CMake*
+
 # IDE Files
 *.code-workspace
 .cproject

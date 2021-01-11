@@ -131,53 +131,40 @@ def setupBash():
     print_warning("HUSARION_CHECKOUT_DIR is set to: '" + HUSARION_CHECKOUT_DIR + "'\n. If this is not correct. Then change before relaunch")
     exit()
 
-def setupBuild():
-    print_status("Setting up build environment")
-
-    # Configure husarion workspace
-    setupBuildHusarion()
-
-    # Configure Local (offnao) build
-    #setupBuildLocal()
-
-
-def setupBuildHusarion():
+def setupBuildHusarion(configRobots, configComputers):
     # Create and configure CMake
-    print_status("Building Husarion Workspace")
+    print_status("Configure & Build Husarion Workspace")
+
+    # Setup Husarion Repos
+    setupHusarionRepos(configRobots, configComputers)
 
     # Execute standalone catkin_make script for husarion_ws
+    print_status("Building Husarion Workspace")
     binDir = cfg.binDirectory()
     script = binDir + "/catkin/catkin_make_husarion"
-
     shell.exec(script, hideOutput=False)
 
-def setupBuildLocal():
-    print_subitem("Create and configure CMake (local/offnao sources)")
-    release = "release"
-    dirappend = "offnao"
-    buildDir = cfg.getBuildDirectory(dirappend)
-    if not os.path.exists(buildDir):
-        os.makedirs(buildDir)
+def setupBuildRosbot(configRobots, configComputers):
+    print_subitem("Configure & Build AIIL ROSBot Melodic Workspace")
 
-    # Change dir to build folder
-    os.chdir(buildDir)
+    # Setup and build go together.
+    # If no devel, then run setup version to overlay on husarion workspace
+    # If existing devel, then run normal build
+    # Both are executed through standalone scripts
 
-    # Run CMake command!
-    command = "cmake  " + \
-              "--debug-trycompile " + \
-              " .. " + \
-              "-DCMAKE_TOOLCHAIN_FILE=../toolchain-offnao.cmake " + \
-              "-DCMAKE_BUILD_TYPE=" + release + " " + \
-              "-DCMAKE_MAKE_PROGRAM=make"
-    print(command)
-    subprocess.call([command], shell=True)
-
-    # BUILD!!!
-    command = "make"
-    subprocess.call([command], shell=True)
-
-    # Change back
-    os.chdir(ROSBOT_CHECKOUT_DIR)
+    # Check for exiting devel
+    melodic_workspace = cfg.rosbotMelodicWorkspace()
+    develDir = melodic_workspace + "/devel"
+    command = ""
+    if not os.path.exists(develDir):
+        # Run initialisation script
+        command = cfg.catkin_init_aiil()
+    else :
+        # Run compilation script
+        command = cfg.catkin_make_aiil()
+    
+    # Execute script
+    shell.exec(command, hideOutput=False)
 
 def setupGit():
     print_status("Checking your Git Configuration")
@@ -499,15 +486,10 @@ if __name__ == "__main__":
         print()
 
     # Configure Husarion Git Repositories
-    query = query_yes_no("Setup Husarion ROS Repositories?")
+    query = query_yes_no("Configure & Build Repositories?")
     if query:
-        setupHusarionRepos(configRobots, configComputers)
-    print()
-
-    # Build!
-    query = query_yes_no("Configure Build & CMake?")
-    if query:
-        setupBuild()
+        setupBuildHusarion(configRobots, configComputers)
+        setupBuildRosbot(configRobots, configComputers)
     print()
 
     print_status("Build Setup Complete")
