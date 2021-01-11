@@ -36,6 +36,7 @@ fullSetupPath = os.path.abspath(__file__)
 binDir = os.path.dirname(fullSetupPath)
 configDir = os.path.abspath(binDir + "/../config/")
 ROSBOT_CHECKOUT_DIR = os.path.abspath(binDir + "/../")
+HUSARION_CHECKOUT_DIR = os.path.abspath(ROSBOT_CHECKOUT_DIR + "/../" + cfg.husarion_workspace)
 
 # Global setup type parameters
 setupRobot      = False
@@ -87,12 +88,17 @@ def setupBash():
     shutil.copy(templateBashrc, rbbBashFile)
     print_subitem("Copying " + templateBashrc + " to " + rbbBashFile)
 
+    # Set Husarion workspace based on device type
+    if setupRobot:
+        HUSARION_CHECKOUT_DIR = os.path.expanduser("~/" + cfg.husarion_workspace)
+
     # Append additional dynamic elements
     print_subitem("Updating " + rbbBashFile)
     bashFile = open(rbbBashFile, "a+")
     bashFile.write("\n")
     bashFile.write("# ROSBot Environment Settings\n")
     bashFile.write("export ROSBOT_CHECKOUT_DIR="+ROSBOT_CHECKOUT_DIR+"\n")
+    bashFile.write("export HUSARION_CHECKOUT_DIR="+HUSARION_CHECKOUT_DIR+"\n")
     bashFile.write("export PATH=\"$ROSBOT_CHECKOUT_DIR/bin:$PATH\"\n")
     bashFile.close()
 
@@ -122,26 +128,26 @@ def setupBash():
     print_warning(".bashrc configuration has changed." +
                   "source the new bashrc file (using below) and re-run the setup\n" + 
                   "source " + rbbBashFile)
+    print_warning("HUSARION_CHECKOUT_DIR is set to: '" + HUSARION_CHECKOUT_DIR + "'\n. If this is not correct. Then change before relaunch")
     exit()
 
 def setupBuild():
     print_status("Setting up build environment")
 
-    # Configure robot build
-    if setupRobot:
-        setupBuildRobot()
+    # Configure husarion workspace
+    setupBuildHusarion()
 
     # Configure Local (offnao) build
     #setupBuildLocal()
 
 
-def setupBuildRobot():
+def setupBuildHusarion():
     # Create and configure CMake
     print_status("Building Husarion Workspace")
 
     # Execute standalone catkin_make script for husarion_ws
     binDir = cfg.binDirectory()
-    script = binDir + "/catkin_make_husarion"
+    script = binDir + "/catkin/catkin_make_husarion"
 
     shell.exec(script, hideOutput=False)
 
@@ -185,21 +191,37 @@ def setupGit():
     print("Your email:", gitEmail)
 
 
-def setupHusarionRepos():
+def setupHusarionRepos(configRobots, configComputers):
     print_status("Setting up Husarion ROS Repositories")
 
     # Repos Config
     configRepos = cfg.loadConfigFile(configDir + "/repos.cfg")
 
-    husarion_wsDir = cfg.husarionWSDir()
+    # Check for Husarion Repository
+    develDir = HUSARION_CHECKOUT_DIR + "/devel"
+    if not os.path.exists(develDir):
+        # Initialise Husarion Directory
+        rosversion = 'melodic'
+        if setupRobot:
+            rosversion = configRobots[setupRobotName]['rosversion']
+        elif setupComp:
+            rosversion = configComputers[setupCompName]['rosversion']
+        
+        # Ensure directory exists
+        if not os.path.exists(HUSARION_CHECKOUT_DIR):
+            os.makedirs(HUSARION_CHECKOUT_DIR)
+
+        # Run initialisation script
+        command = cfg.catkin_init_husarion() + " " + rosversion
+        shell.exec(command, hideOutput=False)
 
     # Iterate through each repo
     for repo in configRepos.sections():
-        if configRepos[repo]['type'] == cfg.repoHusarion:
+        if configRepos[repo]['type'] == cfg.husarion_workspace:
             print_subitem("Repo: " + repo)
 
             # Check if exists
-            wsDir = husarion_wsDir + "/src/" + repo
+            wsDir = HUSARION_CHECKOUT_DIR + "/src/" + repo
             dirExists = os.path.exists(wsDir)
 
             # Check if git version
@@ -222,7 +244,7 @@ def setupHusarionRepos():
                 if dirExists:
                     print_subitem("\tMoving old repo out and replacing with cloned repo")
                     # Move out-of-way
-                    saveDir = husarion_wsDir + "/src/" + "orig_image/."
+                    saveDir = HUSARION_CHECKOUT_DIR + "/src/" + "orig_image/."
                     if not os.path.exists(saveDir):
                         os.makedirs(saveDir)
                     shutil.move(wsDir, saveDir)
@@ -230,7 +252,7 @@ def setupHusarionRepos():
                     shell.exec("touch " + saveDir + "/CATKIN_IGNORE")
 
                 # Clone
-                os.chdir(husarion_wsDir + "/src")
+                os.chdir(HUSARION_CHECKOUT_DIR + "/src")
                 command = "git clone " + configRepos[repo]['giturl'] + " " + repo
                 shell.exec(command, hideOutput=False)
                 os.chdir(ROSBOT_CHECKOUT_DIR)
@@ -380,6 +402,7 @@ if __name__ == "__main__":
 
     # Loading paths
     print_subitem("ROSBOT_CHECKOUT_DIR = " + ROSBOT_CHECKOUT_DIR)
+    print_subitem("HUSARION_CHECKOUT_DIR = " + HUSARION_CHECKOUT_DIR)
     print_subitem("Bin Directory = " + binDir)
     print_subitem("Config Directory = " + configDir)
     print()
@@ -389,18 +412,20 @@ if __name__ == "__main__":
     bashLoaded = tmpEnv != ""
 
     if not bashLoaded:
-        print_warning("bashrc has not been configured. Select yes in the next option to configure")
+        print_warning("bashrc has not been configured. Configuring bash")
+        setupBash()
+        exit()
 
     # Setup bash script
     query = query_yes_no("Configure Bash?")
     if query:
         setupBash()
+        exit()
     print()
 
-    # If bash not loaded, then quit
-    if not bashLoaded:
-        print_error("bashrc not configured or sourced - setup cannot continue")
-        exit()
+    # Check for environment variables existing
+    ROSBOT_CHECKOUT_DIR = cfg.getEnvParameter("ROSBOT_CHECKOUT_DIR")
+    HUSARION_CHECKOUT_DIR = cfg.getEnvParameter("HUSARION_CHECKOUT_DIR")
 
     # Load configs
     config = cfg.loadConfigFile(configDir + "/software.cfg")
@@ -474,11 +499,10 @@ if __name__ == "__main__":
         print()
 
     # Configure Husarion Git Repositories
-    if setupRobot:
-        query = query_yes_no("(Robot only) Setup Husarion ROS Repositories?")
-        if query:
-            setupHusarionRepos()
-        print()
+    query = query_yes_no("Setup Husarion ROS Repositories?")
+    if query:
+        setupHusarionRepos(configRobots, configComputers)
+    print()
 
     # Build!
     query = query_yes_no("Configure Build & CMake?")

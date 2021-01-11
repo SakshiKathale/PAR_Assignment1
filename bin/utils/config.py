@@ -17,13 +17,26 @@ from utils.echo import (
 '''
 Static names/variables
 '''
-repoHusarion = 'husarion_ws'
+husarion_workspace = 'husarion_ws'
 rosbot_workspace = 'rosbot_workspace'
 '''
 Location of bin directory
 '''
 def binDirectory():
     return checkoutDirectory() + "/bin"
+
+'''
+Catkin script for initialising husarion
+'''
+def catkin_init_husarion():
+    return binDirectory() + "/catkin/catkin_init_husarion"
+
+'''
+Catkin script for building husarion
+'''
+def catkin_make_husarion():
+    return binDirectory() + "/catkin/catkin_make_husarion"
+
 
 '''
 Root directory of Codebase
@@ -55,12 +68,6 @@ def getEnvParameter(param, check=False):
                         " Source <checkout_dir>/.bashrc")
             exit()
     return value
-
-'''
-(On Robot) Husarion workspace directory
-'''
-def husarionWSDir():
-    return os.path.expanduser("~/husarion_ws")
 
 '''
 Get the keys from the config block excluding the default block
