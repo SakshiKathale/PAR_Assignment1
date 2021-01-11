@@ -441,10 +441,11 @@ if __name__ == "__main__":
     print()
 
     # Setup Git
-    query = query_yes_no("Setup Git?")
-    if query:
-        setupGit()
-    print()
+    if setupComp:
+        query = query_yes_no("(Computer only) Setup Git?")
+        if query:
+            setupGit()
+        print()
 
     # Setup SSH Config
     query = query_yes_no("Setup SSH Config?")
@@ -459,10 +460,11 @@ if __name__ == "__main__":
     print()
 
     # Setup SSH Keys
-    query = query_yes_no("Setup SSH Keys?")
-    if query:
-        setupSSHKeys()
-    print()
+    if setupComp:
+        query = query_yes_no("(Computer only) Setup SSH Keys?")
+        if query:
+            setupSSHKeys()
+        print()
 
     # Repalce authorised keys (on robot only)
     if setupRobot:
