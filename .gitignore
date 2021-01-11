@@ -1,3 +1,7 @@
+# Rosbot RMIT AIIL configration
+.bashrc
+config/ssh_config
+
 # Save files
 *~
 *.log
@@ -19,6 +23,7 @@
 build-*/
 *.cmake
 CMakeFiles/*
+__pycache__/*
 
 # IDE Files
 *.code-workspace

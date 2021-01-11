@@ -1,0 +1,104 @@
+#! /usr/bin/env python3
+
+'''
+rosbot_sync
+- Synchronise the code to the Rosbot temporarilry
+- Code should in general be checked out
+
+
+@author
+- Timothy Wiley
+'''
+
+import argparse
+import os
+import pathlib
+import re
+import subprocess
+import sys
+
+import utils.config as cfg
+from utils.echo import (
+    print_error,
+    print_status,
+    print_warning,
+    print_progress,
+    print_subitem,
+    query_yes_no
+)
+import utils.shellEscape as shell
+import utils.sshscp as scp
+
+# Global Parameters
+ROSBOT_CHECKOUT_DIR = cfg.checkoutDirectory()
+
+# Remote SSH Python object - created in main
+remote = None
+
+# Static/Constants strings
+CHMOD_GO_NONE = 'go= '
+
+def restartWireless():
+    print_status("Wirelss config changes - restarting wireless")
+    print_warning("This may cause the sync script to crash once the network connection is lost. If this happens, re-run without wireless restart")
+    command = "systemctl --user restart wireless"
+    success = remote.sshCommand(command)
+    if not success:
+        print_error("Restart Wireless Failed")
+
+def deleteCode():
+    print_status("Deleting existing files on the Robot")
+
+    # Delete rosbot workspace folder
+    remote.deleteFiles(cfg.rosbot_workspace + "/.")
+
+def syncRosbot():
+    print_status("Synching Robot")
+
+    # Sync Nao Image home folder
+    src = cfg.checkoutDirectory() + "/."
+    dest = cfg.rosbot_workspace + "/."
+    remote.rsyncFiles(src, dest, chmod=CHMOD_GO_NONE)
+
+
+# Main entry point
+if __name__ == "__main__":
+    print_status("ROSBot Sync")
+    print_subitem("ROSBOT_CHECKOUT_DIR = "+ ROSBOT_CHECKOUT_DIR)
+
+    # Process args
+    parser = argparse.ArgumentParser(description='Sync ROSBot software. This should only be a temporary operation for quick development use. Use of git commit/checkout operations are preferred')
+    parser.add_argument('-r', action='store_true', help='Sync RedBackBots Software to the robot')
+    parser.add_argument('-d', action='store_true', help='Delete files on the robot before copying')
+    parser.add_argument('-b', action='store_true', help='Enable debug mode - does not execute remote commands')
+    parser.add_argument('robot', type=str, help='robot to sync')
+    args = parser.parse_args()
+
+    # Setup SSH-SCP object
+    if args.b:
+        print_warning("Debug Mode Enabled")
+    remote = scp.SshScp(debug=args.b)
+
+    robot = args.robot
+    print_status("Synching to " + args.robot)
+    remote.setHostname(robot)
+    
+    # Load all robot config
+    robotConfig = cfg.loadConfig("robots.cfg")
+    if robotConfig.has_section(robot):
+        robotConfig = robotConfig[robot]
+    else:
+        print_error("Robot Config does not contain: " + robot)
+        exit()
+    print()
+
+    # Do delete
+    if args.d:
+        deleteCode()
+
+    # Do robot sync
+    if args.r:
+        syncRosbot()
+    print()
+
+    print_status("Sync done")

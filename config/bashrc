@@ -1,0 +1,28 @@
+# Base file for .bashrc for ROSBot workshop
+# This base is copied to $ROSBOT_CHECKOUT_DIR/.basrhc by the build_setup script
+
+# Aliases
+alias grep='grep --color=auto'
+alias vi="vim"
+alias ..="cd .."
+
+# Dir Stack
+function pn_stack()
+{
+    lines=`dirs | wc -w | sed -E -e 's/ +//'`
+    lines=`expr $lines - 1`
+    echo
+    echo "Dir Stack"
+    dirs -v | tail -$lines | sort -rn | sed -e 's/^/    /'
+}
+
+function pn_pushd()
+{
+    pushd $1 > /dev/null;
+    pn_stack
+}
+
+alias pd='pn_pushd'
+alias pp='popd > /dev/null; pn_stack'
+
+
