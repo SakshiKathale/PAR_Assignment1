@@ -13,6 +13,7 @@ import os
 import pathlib
 import re
 import shutil
+import stat
 import subprocess
 import sys
 
@@ -303,9 +304,11 @@ def setupSSHConfig(configRobots, configComputers):
         setupSSHConfigAdd(sshLocalFile, comp, configComputers[comp]["ip"])
     sshLocalFile.close()
 
-    # Copy Local SSH config to destination
+    # Copy Local SSH config to destination - and set permissions
     print_subitem("Copying Local SSH to ~/.ssh")
     shutil.copy(localSSHFile, ssh.sshConfigDestination)
+    #os.chmod(ssh.sshConfigDestination, 0o600)
+    os.chmod(ssh.sshConfigDestination, stat.S_IRUSR | stat.S_IWUSR)
 
     # Search for ssh config block
     found = grep(sshConfig, "ROSBot")
