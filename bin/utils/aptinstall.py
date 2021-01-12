@@ -8,11 +8,24 @@ import apt
 import sys
 
 import utils.echo as echo
+import utils.shellEscape as shell
 
 cache = apt.cache.Cache()
 #cache.update()
 cache.open()
 
+'''
+Check apt cache for package installation status
+'''
+def aptcheck(pkg_name):
+
+    pkg = cache[pkg_name]
+    installed = pkg.is_installed
+    return installed
+
+'''
+Install using Python-apt package. This requires the script to be run as "sudo" or with a user account with sudo privillages. Without, this will fail.
+'''
 def aptinstall(pkg_name):
 
     pkg = cache[pkg_name]
@@ -26,8 +39,17 @@ def aptinstall(pkg_name):
         try:
             cache.commit()
             installed = True
-        except arg:
+        except Exception as arg:
             echo.print_error("Installation failed [{err}]".format(err=str(arg)))
     
     return installed
+
+'''
+Install using commandline apt with sudo permissions
+'''
+def aptinstallcmdline(pkgs):
+    sep = ' '
+    fullList = sep.join(pkgs)
+    command = "sudo apt install " + fullList
+    shell.exec(command, hideOutput=False)
 

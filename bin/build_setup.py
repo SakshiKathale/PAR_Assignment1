@@ -47,29 +47,39 @@ setupCompName   = None
 def installSoftware(software, ros=False, rosversion='none'):
     # Load this here to avoid script delays
     print_status("Installing")
-    from utils.aptinstall import aptinstall
+    from utils.aptinstall import (aptinstall, aptcheck, aptinstallcmdline)
+
+    toInstall = []
 
     # Load Software to install
     counter = 0
     for pkg in software:
         progress = round(counter / len(software) * 100)
 
-        # If ROS package - prepend with ros package name
-        if ros:
-            pkg = "ros-" + rosversion + "-" + pkg
-
         if software.getboolean(pkg):
+            # If ROS package - prepend with ros package name
+            if ros:
+                pkg = "ros-" + rosversion + "-" + pkg
+
             print_progress("Installing " + pkg, progress)
-            installed = aptinstall(pkg)
-            #installed = False;
-            if not installed:
-                #print_warning("INSTALLATION TEMPORARILY DISABLED DURING SCRIPT TESTING FOR SAFETY")
-                print_error("Package installation failed, terminating")
-                exit()
-        else:
-            print_progress("Skipping " + pkg, progress)
+            installed = aptcheck(pkg)
+            if installed:
+                print_progress("Package " + pkg + " installed. Skipping", progress)
+            else :
+                print_progress("Marking " + pkg + " for installation", progress)
+                toInstall.append(pkg)
+        else :
+            print_progress("Skipping package - configuration file disables install of " + pkg, progress)
         counter += 1
-    print_progress("Installation done", 100)
+    print_progress("Installation checked", 100)
+
+    if len(toInstall) > 0:
+        print_warning("Installation will most likely request admin privillages to complete installation")
+        print_status("Commencing Installation")
+        print_subitem("Packages: " + " ".join(toInstall))
+        aptinstallcmdline(toInstall)
+    else :
+        print_subitem("No packages to install")
 
 
 def replaceAuthKeys():
@@ -89,16 +99,17 @@ def setupBash():
     print_subitem("Copying " + templateBashrc + " to " + rbbBashFile)
 
     # Set Husarion workspace based on device type
+    husDir = HUSARION_CHECKOUT_DIR
     if setupRobot:
-        HUSARION_CHECKOUT_DIR = os.path.expanduser("~/" + cfg.husarion_workspace)
+        husDir = os.path.expanduser("~/" + cfg.husarion_workspace)
 
     # Append additional dynamic elements
     print_subitem("Updating " + rbbBashFile)
     bashFile = open(rbbBashFile, "a+")
     bashFile.write("\n")
     bashFile.write("# ROSBot Environment Settings\n")
-    bashFile.write("export ROSBOT_CHECKOUT_DIR="+ROSBOT_CHECKOUT_DIR+"\n")
-    bashFile.write("export HUSARION_CHECKOUT_DIR="+HUSARION_CHECKOUT_DIR+"\n")
+    bashFile.write("export ROSBOT_CHECKOUT_DIR=" + ROSBOT_CHECKOUT_DIR + "\n")
+    bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
     bashFile.write("export PATH=\"$ROSBOT_CHECKOUT_DIR/bin:$PATH\"\n")
     bashFile.close()
 
