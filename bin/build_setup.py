@@ -112,6 +112,9 @@ def setupBash():
     bashFile.write("export ROSBOT_CHECKOUT_DIR=" + ROSBOT_CHECKOUT_DIR + "\n")
     bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
     bashFile.write("export PATH=\"$ROSBOT_CHECKOUT_DIR/bin:$PATH\"\n")
+    bashFile.write("\n")
+    bashFile.write("# Source our Meldoic workspace\n")
+    bashFile.write("source $ROSBOT_CHECKOUT_DIR/melodic_workspace/devel/setup.bash\n")
     bashFile.close()
 
     # Query if user wishes to automatically source rosbot
