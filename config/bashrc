@@ -1,4 +1,4 @@
-# Base file for .bashrc for ROSBot workshop
+
 # This base is copied to $ROSBOT_CHECKOUT_DIR/.basrhc by the build_setup script
 
 # Aliases
@@ -25,4 +25,15 @@ function pn_pushd()
 alias pd='pn_pushd'
 alias pp='popd > /dev/null; pn_stack'
 
+
+# ROS Parameter Settings
+unset ROS_IPV6
+#unset ROS_HOSTNAME
+export ROS_HOSTNAME=`hostname`
+
+# Function to set master
+function ros_master() {
+    echo "Setting: ROS_MASTER_URI=http://$1:11311"
+    export ROS_MASTER_URI=http://$1:11311
+}
 

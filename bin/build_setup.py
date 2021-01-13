@@ -103,7 +103,7 @@ def setupBash():
     husDir = HUSARION_CHECKOUT_DIR
     if setupRobot:
         husDir = os.path.expanduser("~/" + cfg.husarion_workspace)
-
+    
     # Append additional dynamic elements
     print_subitem("Updating " + rbbBashFile)
     bashFile = open(rbbBashFile, "a+")
@@ -418,7 +418,7 @@ if __name__ == "__main__":
         exit()
 
     # Setup bash script
-    query = query_yes_no("Configure Bash?")
+    query = query_yes_no("Configure Bash? (Includes ROS envrionment parameters")
     if query:
         setupBash()
         exit()
