@@ -5,7 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /TF1/Status1
         - /Astra1
       Splitter Ratio: 0.4184914827346802
     Tree Height: 294
@@ -56,18 +55,82 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: false
+      Enabled: true
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
-        Link Tree Style: ""
+        Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_depth_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_rgb_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_left_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        laser:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        range_fl:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        range_fr:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        range_rl:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        range_rr:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rear_left_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_right_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        top:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Name: Rosbot Pro
       Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
-      Value: false
+      Value: true
       Visual Enabled: true
     - Alpha: 0.699999988079071
       Class: rviz/Map
@@ -110,42 +173,19 @@ Visualization Manager:
       Use rainbow: true
       Value: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_link:
-          Value: true
-        camera_depth_frame:
-          Value: true
-        camera_depth_optical_frame:
-          Value: true
-        camera_link:
-          Value: true
-        camera_rgb_frame:
-          Value: true
-        camera_rgb_optical_frame:
-          Value: true
-        imu_link:
-          Value: true
-        laser:
-          Value: true
-        odom:
-          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base_link:
-            imu_link:
-              {}
-            laser:
-              {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Class: rviz/Image
       Enabled: true
       Image Topic: /camera/rgb/image_raw
@@ -186,7 +226,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.1336112022399902
+      Distance: 0.9917201995849609
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -201,10 +241,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2897971868515015
+      Pitch: 0.2447970062494278
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.790398120880127
+      Yaw: 0.5422093272209167
     Saved: ~
 Window Geometry:
   Astra:
