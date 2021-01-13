@@ -24,7 +24,7 @@ int main(int argc, char** argv){
     tf::StampedTransform transform;
     try{
       listener.lookupTransform("/turtle2", "/turtle1",
-                               ros::Time::now(), transform);
+                               ros::Time::now()-ros::Duration(0.1), transform);
     }
     catch (tf::TransformException &ex) {
       ROS_ERROR("%s",ex.what());
