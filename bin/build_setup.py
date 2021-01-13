@@ -103,7 +103,7 @@ def setupBash():
     husDir = HUSARION_CHECKOUT_DIR
     if setupRobot:
         husDir = os.path.expanduser("~/" + cfg.husarion_workspace)
-
+    
     # Append additional dynamic elements
     print_subitem("Updating " + rbbBashFile)
     bashFile = open(rbbBashFile, "a+")
@@ -112,6 +112,9 @@ def setupBash():
     bashFile.write("export ROSBOT_CHECKOUT_DIR=" + ROSBOT_CHECKOUT_DIR + "\n")
     bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
     bashFile.write("export PATH=\"$ROSBOT_CHECKOUT_DIR/bin:$PATH\"\n")
+    bashFile.write("\n")
+    bashFile.write("# Source our Meldoic workspace\n")
+    bashFile.write("source $ROSBOT_CHECKOUT_DIR/melodic_workspace/devel/setup.bash\n")
     bashFile.close()
 
     # Query if user wishes to automatically source rosbot
@@ -418,7 +421,7 @@ if __name__ == "__main__":
         exit()
 
     # Setup bash script
-    query = query_yes_no("Configure Bash?")
+    query = query_yes_no("Configure Bash? (Includes ROS envrionment parameters")
     if query:
         setupBash()
         exit()
