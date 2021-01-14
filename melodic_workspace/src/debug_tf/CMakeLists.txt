@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(learning_tf2)
+project(debug_tf)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -107,7 +107,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES learning_tf2
+#  LIBRARIES debug_tf
 #  CATKIN_DEPENDS roscpp rospy tf2 tf2_ros turtlesim
 #  DEPENDS system_lib
 )
@@ -125,7 +125,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/learning_tf2.cpp
+#   src/${PROJECT_NAME}/debug_tf.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -136,7 +136,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/learning_tf2_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/debug_tf_node.cpp)
 
 add_executable(turtle_tf_listener_debug src/turtle_tf_listener_debug.cpp)
 target_link_libraries(turtle_tf_listener_debug
@@ -205,7 +205,7 @@ target_link_libraries(turtle_tf_listener_debug
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_learning_tf2.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_debug_tf.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
