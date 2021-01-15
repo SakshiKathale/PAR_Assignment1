@@ -186,6 +186,7 @@ def setupGit():
     print("If the user info is incorrect, please configure it like:")
     print("\tgit config user.name Tim")
     print("\tgit config user.email s123456@student.rmit.edu.au")
+    print("\tgit config --global pull.rebase true")
     
     gitUser = shell.capture(["git config user.name"])
     gitEmail = shell.capture(["git config user.email"])
