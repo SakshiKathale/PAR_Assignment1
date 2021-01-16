@@ -275,7 +275,7 @@ def setupHostsAliases(configRobots, configComputers):
             shell.exec(command, hideOutput=True)
 
     for comp in configComputers.sections():
-        if comp != setupCompName:
+        if (comp != setupCompName) and (comp != 'general'):
             print_subitem("Updating " + comp)
             command = commandBase + " " + comp + " " + ssh.getRobotIP(configComputers[comp]["ip"])
             shell.exec(command, hideOutput=True)
@@ -304,8 +304,9 @@ def setupSSHConfig(configRobots, configComputers):
         print_subitem("\tAdding " + robot)
         setupSSHConfigAdd(sshLocalFile, robot, configRobots[robot]["ip"])
     for comp in configComputers.sections():
-        print_subitem("\tAdding " + comp)
-        setupSSHConfigAdd(sshLocalFile, comp, configComputers[comp]["ip"])
+        if comp != 'general':
+            print_subitem("\tAdding " + comp)
+            setupSSHConfigAdd(sshLocalFile, comp, configComputers[comp]["ip"])
     sshLocalFile.close()
 
     # Copy Local SSH config to destination - and set permissions
@@ -383,6 +384,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Setup the build for a robot/computer')
     parser.add_argument('-r', dest="robot", type=str, help='Robot to setup Build for (conflicts with "computer")')
     parser.add_argument('-c', dest="computer", type=str, help='Computer to setup Build for (conflicts with "robot")')
+    parser.add_argument('-g', dest="general", action='store_true', help='Configure a General Computer/Device')
     args = parser.parse_args()
     if (args.robot is not None):
         setupRobot = True
@@ -390,6 +392,9 @@ if __name__ == "__main__":
     if (args.computer is not None):
         setupComp = True
         setupCompName = args.computer
+    if args.general:
+        setupComp = True
+        setupCompName = 'general'
     if (not setupRobot) and (not setupComp):
         print_error("No selection of Robot or Computer")
         parser.print_help()
