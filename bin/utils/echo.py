@@ -36,6 +36,13 @@ def print_subitem(msg):
     print("  -  ", msg)
 
 
+def query_user(question):
+    sys.stdout.write(unix_colours.BLUE)
+    sys.stdout.write(question)
+    sys.stdout.write(unix_colours.RESET)
+    choice = input()
+    return choice
+
 def query_yes_no(question, default="no"):
     valid = {"yes": True, "y": True, "ye": True,
              "no": False, "n": False}

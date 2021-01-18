@@ -24,6 +24,7 @@ from utils.echo import (
     print_warning,
     print_progress,
     print_subitem,
+    query_user,
     query_yes_no
 )
 from utils.grep import (
@@ -193,6 +194,46 @@ def setupGit():
     print("Your user name:", gitUser)
     print("Your email:", gitEmail)
 
+def setupAWSGreengrass(config):
+    print_status("Configuring AWS Greengrass")
+    configAWS = config['AWS']
+
+    # Check for tarfile
+    ggfile = cfg.configDirectory() + "/" + configAWS['ggfile']
+    print_subitem("Checking for Greengrass file: " + ggfile)
+    if os.path.exists(ggfile):
+        print_subitem("\tFound")
+    else:
+        # Download tarfile
+        print_subitem("Not Found - Downloading")
+        url = configAWS['gginstallurl']
+        bbuser = query_user("What is your Atlassian/BitBucket Username? ")
+        command = "wget -P " + cfg.configDirectory() + " --ask-password --user=" + bbuser +  " " + url
+        print_warning("Download will ask for your Atlassian/BitBucket password")
+        shell.exec(command, hideOutput=False)
+
+    # Check for GG setup script
+    ggsetup = cfg.configDirectory() + "/" + configAWS['ggsetupfile']
+    print_subitem("Checking for Husarion Greengrass setup script")
+    if os.path.exists(ggsetup):
+        print_subitem("\tFound")
+    else:
+        # Download tarfile
+        print_subitem("Not Found - Downloading")
+        print_error("not able to download - error in hussarion script. Only use local checked-in version of the script")
+        exit()
+        #url = configAWS['ggsetupurl']
+        #command = "wget -P " + cfg.configDirectory() + " " + url
+        #shell.exec(command, hideOutput=False)
+        #os.chmod(ggsetup, 0o600)
+
+    # Execute setup
+    print_status("Executing Setup Script")
+    os.chdir(cfg.configDirectory())
+    command = "sudo " + ggsetup
+    print(command)
+    shell.exec(command, hideOutput=False)
+    os.chdir(ROSBOT_CHECKOUT_DIR)
 
 def setupHusarionRepos(configRobots, configComputers):
     print_status("Setting up Husarion ROS Repositories")
@@ -293,7 +334,7 @@ def setupSSHConfig(configRobots, configComputers):
     if not os.path.exists(sshConfig):
         print_subitem("Creating Root (~/.ssh) SSH Config File")
         pathlib.Path(sshConfig).touch()
-        os.chmod(sshConfig, 0o600)
+        os.chmod(sshConfig, 0o700)
 
     # Create the ssh config file in local config folder
     localSSHFile = cfg.sshLocalConfig()
@@ -514,6 +555,13 @@ if __name__ == "__main__":
         setupBuildHusarion(configRobots, configComputers)
         setupBuildRosbot(configRobots, configComputers)
     print()
+
+    # Configure AWS Greengrass
+    if setupRobot:
+        query = query_yes_no("Configure Greengrass for AWS remote connection")
+        if query:
+            setupAWSGreengrass(config)
+        print()
 
     print_status("Build Setup Complete")
 
