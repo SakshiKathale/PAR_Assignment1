@@ -47,8 +47,13 @@ setupComp       = False
 setupCompName   = None
 
 def installSoftware(software, ros=False, rosversion='none'):
+    # Ensure NPM is available
+    print_status("Setup NPM package location")
+    command = "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
+    shell.exec(command, hideOutput=False)
+
     # Load this here to avoid script delays
-    print_status("Installing")
+    print_status("Installing Software")
     from utils.aptinstall import (aptinstall, aptcheck, aptinstallcmdline)
 
     toInstall = []
@@ -147,12 +152,12 @@ def setupBash():
     print_warning("HUSARION_CHECKOUT_DIR is set to: '" + HUSARION_CHECKOUT_DIR + "'\n. If this is not correct. Then change before relaunch")
     exit()
 
-def setupBuildHusarion(configRobots, configComputers):
+def setupBuildHusarion(configRobots, configComputers, configSoftware):
     # Create and configure CMake
     print_status("Configure & Build Husarion Workspace")
 
     # Setup Husarion Repos
-    setupHusarionRepos(configRobots, configComputers)
+    setupHusarionRepos(configRobots, configComputers, configSoftware)
     
     # Fix melodic issue
     setupHusarionFixes(configRobots, configComputers)
@@ -238,7 +243,7 @@ def setupAWSGreengrass(config):
     shell.exec(command, hideOutput=False)
     os.chdir(ROSBOT_CHECKOUT_DIR)
 
-def setupHusarionRepos(configRobots, configComputers):
+def setupHusarionRepos(configRobots, configComputers, configSoftware):
     print_status("Setting up Husarion ROS Repositories")
 
     # Repos Config
@@ -303,6 +308,32 @@ def setupHusarionRepos(configRobots, configComputers):
                 command = "git clone " + configRepos[repo]['giturl'] + " " + repo
                 shell.exec(command, hideOutput=False)
                 os.chdir(ROSBOT_CHECKOUT_DIR)
+
+    # Install NodeJS and NPM packages for route_admin_panel repository
+    if configRepos.has_section("route_admin_panel"):
+        print_status("Installing NodeJS & NPM packages for Husarion route_admin_panel repo")
+        panelDir = HUSARION_CHECKOUT_DIR + "/src/route_admin_panel/nodejs"
+        
+        # Configure NPM packages to install
+        packages = ""
+        npmSoftware = configSoftware['NPM']
+        for pkg in npmSoftware:
+            if npmSoftware.getboolean(pkg):
+                packages += " " + pkg
+        
+        # Do install
+        print_subitem("Installing in " + panelDir)
+        if os.path.exists(panelDir):
+            os.chdir(panelDir)
+            # NPM packages
+            command = "npm install " + packages
+            print_subitem(command)
+            shell.exec(command, hideOutput=False)
+            # NPM general install
+            command = "npm install "
+            print_subitem(command)
+            shell.exec(command, hideOutput=False)
+            os.chdir(ROSBOT_CHECKOUT_DIR)
 
 def setupHusarionFixes(configRobots, configComputers):
     rosversion = configRobots[setupRobotName]['rosversion']
@@ -564,7 +595,7 @@ if __name__ == "__main__":
     # Configure Husarion Git Repositories
     query = query_yes_no("Configure & Build Repositories?")
     if query:
-        setupBuildHusarion(configRobots, configComputers)
+        setupBuildHusarion(configRobots, configComputers, config)
         setupBuildRosbot(configRobots, configComputers)
     print()
 
