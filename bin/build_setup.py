@@ -153,6 +153,9 @@ def setupBuildHusarion(configRobots, configComputers):
 
     # Setup Husarion Repos
     setupHusarionRepos(configRobots, configComputers)
+    
+    # Fix melodic issue
+    setupHusarionFixes(configRobots, configComputers)
 
     # Execute standalone catkin_make script for husarion_ws
     print_status("Building Husarion Workspace")
@@ -301,6 +304,15 @@ def setupHusarionRepos(configRobots, configComputers):
                 shell.exec(command, hideOutput=False)
                 os.chdir(ROSBOT_CHECKOUT_DIR)
 
+def setupHusarionFixes(configRobots, configComputers):
+    rosversion = configRobots[setupRobotName]['rosversion']
+    if rosversion == 'melodic':
+        print_status("Fixing issues with astra_camera OpenNi Log configuration")
+        filename = HUSARION_CHECKOUT_DIR + "/src/astra_camera/ros_astra_camera-master/include/openni2_redist/x64/OpenNI.ini"
+        if os.path.exists(filename):
+            command = "sed -i 's/LogToConsole=[0-9]/LogToConsole=0/' " + filename
+            print_subitem("Executing: " + command)
+            shell.exec(command, hideOutput=True)
             
 
 def setupHostsAliases(configRobots, configComputers):
