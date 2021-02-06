@@ -48,9 +48,10 @@ setupCompName   = None
 
 def installSoftware(software, ros=False, rosversion='none'):
     # Ensure NPM is available
-    print_status("Setup NPM package location")
-    command = "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
-    shell.exec(command, hideOutput=False)
+    if not ros:
+        print_status("Setup NPM package location")
+        command = "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
+        shell.exec(command, hideOutput=False)
 
     # Load this here to avoid script delays
     print_status("Installing Software")
