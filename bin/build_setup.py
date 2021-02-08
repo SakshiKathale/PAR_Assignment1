@@ -51,6 +51,7 @@ def installSoftware(software, ros=False, rosversion='none'):
     if not ros:
         print_status("Setup NPM package location")
         command = "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
+        print_subitem("Running: " + command)
         shell.exec(command, hideOutput=False)
 
     # Load this here to avoid script delays
