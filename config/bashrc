@@ -39,11 +39,25 @@ function set_ros_master() {
 
 # Set ROS IP using default (or provided) argument
 function set_ros_ip() {
+    unset ROS_HOSTNAME
     if [[ $# -eq 0 ]] ; then
         export ROS_IP=`hostname -I | awk '{print $1}'`
     else
         export ROS_IP=$1
     fi
+    echo "Unset: ROS_HOSTNAME"
     echo "Setting: ROS_IP=$ROS_IP"
+}
+
+# Set ROS HOSTNAME using default (or provided) argument
+function set_ros_hostname() {
+    unset ROS_IP
+    if [[ $# -eq 0 ]] ; then
+        export ROS_HOSTNAME=`hostname`
+    else
+        export ROS_HOSTNAME=$1
+    fi
+    echo "Unset: ROS_IP"
+    echo "Setting: ROS_HOSTNAME=$ROS_HOSTNAME"
 }
 
