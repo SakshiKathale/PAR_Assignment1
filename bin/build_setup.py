@@ -162,7 +162,8 @@ def setupBuildHusarion(configRobots, configComputers, configSoftware):
     setupHusarionRepos(configRobots, configComputers, configSoftware)
     
     # Fix melodic issue
-    setupHusarionFixes(configRobots, configComputers)
+    if setupRobot:
+        setupHusarionFixes(configRobots, configComputers)
 
     # Execute standalone catkin_make script for husarion_ws
     print_status("Building Husarion Workspace")
