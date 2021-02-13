@@ -1,0 +1,13 @@
+material AIILHazardflammablegas/Marker
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture flammablegas.png
+			}
+		}
+	}
+}
