@@ -1,0 +1,13 @@
+cp /etc/apt/apt.conf.d/02proxy 02proxy
+(OR create an empty file 02proxy)
+
+./build
+
+docker-compose up
+
+docker exec -it gazebo bash
+export DISPLAY=novnc:0
+roslaunch rosbot_description rosbot.launch
+
+rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+

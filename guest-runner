@@ -1,0 +1,3 @@
+#!/bin/bash
+
+roslaunch rosbot_description rosbot.launch || sleep 5000
