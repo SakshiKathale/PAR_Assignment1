@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker build -t "par-melodic" -f Dockerfile-arm64.melodic . --network host 2>&1 | tee build.log

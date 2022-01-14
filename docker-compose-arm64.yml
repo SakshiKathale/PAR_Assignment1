@@ -1,0 +1,58 @@
+version: "3.5"
+x-alvar-defaults:
+    &alvar-defaults
+    build:
+      context: alvar_marker_recognition
+      dockerfile: Dockerfile
+      network: host
+    #networks:
+    #  vxlab:
+    volumes:
+    - type: bind
+      source: ./rosie
+      target: /root/rosie
+services:
+    novnc:
+        container_name: novnc
+        image: theasp/novnc
+        #networks:
+        #  vxlab:
+        ports:
+          - "8080:8080"
+    gazebo:
+        depends_on: [novnc]
+        container_name: gazebo
+        build:
+          context: .
+          dockerfile: Dockerfile-arm64.melodic
+          network: host
+        #networks:
+        #  vxlab:
+        volumes:
+        - type: bind
+          source: /dev/shm
+          target: /dev/shm
+        - type: bind
+          source: /tmp/.X11-unix
+          target: /tmp/.X11-unix
+        - type: bind
+          source: /dev/dri
+          target: /dev/dri
+        privileged: true
+        #environment:
+        #  - DISPLAY=novnc:0
+        #  - BAXTER_ONLY=${BAXTER_ONLY}
+        entrypoint: ["/root/guest-runner"]
+
+#networks:
+#    vxlab:
+#      external: true
+#      name: vxlab
+
+#networks:
+    #vxlab:
+        #name: vxlab
+        #ipam:
+            #config:
+              #- subnet: "10.42.170.0/24"
+                #- gateway: "10.42.170.254"

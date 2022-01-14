@@ -2,10 +2,15 @@
 # install Docker (from docker
 # clone this repository
 
+# If proxy is needed (VSLab only)
 cp /etc/apt/apt.conf.d/02proxy 02proxy
 (OR create an empty file 02proxy)
 
-./build
+# Melodic build (AMD64)
+./build-melodic
+
+# Melodic build (Mac M1)
+./build-melodic-arm64
 
 docker-compose up
 
