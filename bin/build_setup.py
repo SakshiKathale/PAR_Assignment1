@@ -355,7 +355,6 @@ def setupHusarionFixes(configRobots, configComputers):
             command = "sed -i 's/LogToConsole=[0-9]/LogToConsole=0/' " + filename
             print_subitem("Executing: " + command)
             shell.exec(command, hideOutput=True)
-            
 
 def setupHostsAliases(configRobots, configComputers):
     print_status("Configuring /etc/hosts with manage_hosts.py tool")
@@ -363,18 +362,12 @@ def setupHostsAliases(configRobots, configComputers):
     manageProgram = cfg.binDirectory() + "/manage_hosts.py"
     commandBase = "sudo " + manageProgram
 
-    for robot in configRobots.sections():
-        if robot != setupRobotName:
-            print_subitem("Updating " + robot)
-            command = commandBase + " " + robot + " " + ssh.getRobotIP(configRobots[robot]["ip"])
-            shell.exec(command, hideOutput=True)
-
-    for comp in configComputers.sections():
-        if (comp != setupCompName) and (comp != 'general'):
-            print_subitem("Updating " + comp)
-            command = commandBase + " " + comp + " " + ssh.getRobotIP(configComputers[comp]["ip"])
-            shell.exec(command, hideOutput=True)
-
+    if setupRobot:
+        command = commandBase + " -r " + setupRobotName
+        shell.exec(command, hideOutput=False)
+    elif setupComp:
+        command = commandBase + " -c " + setupCompName
+        shell.exec(command, hideOutput=False)
 
 def setupSSHConfig(configRobots, configComputers):
     print_status("Setting up SSH Config")
