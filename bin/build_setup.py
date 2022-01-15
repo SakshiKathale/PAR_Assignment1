@@ -431,8 +431,6 @@ def setupSSHConfig(configRobots, configComputers):
         for line in sshBak:
             sshFile.write(line)
         sshFile.close()
-    else:
-        print_warning("SSH Config already configured. Updating this is not yet implemented")
 
 def setupSSHConfigAdd(sshFile, name, ip):
     sshFile.write("Host " + name + "\n")
@@ -577,7 +575,7 @@ if __name__ == "__main__":
         print()
 
     # Setup SSH Config
-    query = query_yes_no("Setup SSH Config?")
+    query = query_yes_no("Setup ~/.ssh/config file?")
     if query:
         setupSSHConfig(configRobots, configComputers)
     print()
