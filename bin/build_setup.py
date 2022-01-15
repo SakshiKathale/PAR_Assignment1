@@ -96,7 +96,6 @@ def replaceAuthKeys():
     target = ssh.sshDirectory
     shutil.copy(localAuthFile, target)
 
-
 def setupBash():
     print_status("Configuring Bash Environment")
     rbbBashFile = os.path.abspath(AIIL_CHECKOUT_DIR + "/.bashrc")
@@ -458,7 +457,6 @@ def setupSSHKeys():
             shell.exec(command)
         else:
             print_subitem("Key already in authorized keys")
-
     
 
 # Main entry point
