@@ -212,47 +212,6 @@ def setupGit():
     else:
         print("Skipping git configuration - details are correct")
 
-def setupAWSGreengrass(config):
-    print_status("Configuring AWS Greengrass")
-    configAWS = config['AWS']
-
-    # Check for tarfile
-    ggfile = cfg.configDirectory() + "/" + configAWS['ggfile']
-    print_subitem("Checking for Greengrass file: " + ggfile)
-    if os.path.exists(ggfile):
-        print_subitem("\tFound")
-    else:
-        # Download tarfile
-        print_subitem("Not Found - Downloading")
-        url = configAWS['gginstallurl']
-        bbuser = query_user("What is your Atlassian/BitBucket Username? ")
-        command = "wget -P " + cfg.configDirectory() + " --ask-password --user=" + bbuser +  " " + url
-        print_warning("Download will ask for your Atlassian/BitBucket password")
-        shell.exec(command, hideOutput=False)
-
-    # Check for GG setup script
-    ggsetup = cfg.configDirectory() + "/" + configAWS['ggsetupfile']
-    print_subitem("Checking for Husarion Greengrass setup script")
-    if os.path.exists(ggsetup):
-        print_subitem("\tFound")
-    else:
-        # Download tarfile
-        print_subitem("Not Found - Downloading")
-        print_error("not able to download - error in hussarion script. Only use local checked-in version of the script")
-        exit()
-        #url = configAWS['ggsetupurl']
-        #command = "wget -P " + cfg.configDirectory() + " " + url
-        #shell.exec(command, hideOutput=False)
-        #os.chmod(ggsetup, 0o600)
-
-    # Execute setup
-    print_status("Executing Setup Script")
-    os.chdir(cfg.configDirectory())
-    command = "sudo " + ggsetup
-    print(command)
-    shell.exec(command, hideOutput=False)
-    os.chdir(AIIL_CHECKOUT_DIR)
-
 def setupHusarionRepos(configRobots, configComputers, configSoftware):
     print_status("Setting up Husarion ROS Repositories")
 
@@ -597,13 +556,6 @@ if __name__ == "__main__":
         setupBuildHusarion(configRobots, configComputers, config)
         setupBuildRosbot(configRobots, configComputers)
     print()
-
-    # Configure AWS Greengrass
-    if setupRobot:
-        query = query_yes_no("Configure Greengrass for AWS remote connection")
-        if query:
-            setupAWSGreengrass(config)
-        print()
 
     print_status("Build Setup Complete")
 
