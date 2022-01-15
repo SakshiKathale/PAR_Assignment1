@@ -508,15 +508,14 @@ if __name__ == "__main__":
     tmpEnv = cfg.getEnvParameter("AIIL_CHECKOUT_DIR", check=True)
     bashLoaded = tmpEnv != ""
 
-    if not bashLoaded:
-        print_warning("bashrc has not been configured. Configuring bash")
-        setupBash()
-        exit()
-
     # Setup bash script
-    query = query_yes_no("Configure Bash? (Includes ROS envrionment parameters")
-    if query:
-        setupBash()
+    if not bashLoaded:
+        print_warning("bashrc has not been configured. Either reload or configure bash")
+        query = query_yes_no("Configure Bash? (Includes ROS envrionment parameters")
+        if query:
+            setupBash()
+        else:
+            print_error("Cannot continue withouw bashrc being configured")
         exit()
     print()
 
