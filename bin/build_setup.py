@@ -195,15 +195,23 @@ def setupBuildRosbot(configRobots, configComputers):
 
 def setupGit():
     print_status("Checking your Git Configuration")
-    print("If the user info is incorrect, please configure it like:")
-    print("\tgit config user.name Tim")
-    print("\tgit config user.email s123456@student.rmit.edu.au")
-    print("\tgit config --global pull.rebase true")
-    
-    gitUser = shell.capture(["git config user.name"])
-    gitEmail = shell.capture(["git config user.email"])
-    print("Your user name:", gitUser)
-    print("Your email:", gitEmail)
+    gitParams = ["user.name", "user.email", "pull.rebase"]
+    for param in gitParams:
+        value = shell.capture(["git config " + param])
+        print("git config " + param + " = " + value)
+
+    query = query_yes_no("Are these details correct?")
+    if not query:
+        print_status("Updating Git details")
+        for param in gitParams:
+            query = query_yes_no("Update " + param + "?")
+            if query:
+                value = query_user("New value for " + param + ": ")
+                command = "git config --global " + param + " " + value
+                print_status("Executing: " + command)
+                shell.exec(command, hideOutput=False)
+    else:
+        print("Skipping git configuration - details are correct")
 
 def setupAWSGreengrass(config):
     print_status("Configuring AWS Greengrass")
@@ -563,7 +571,7 @@ if __name__ == "__main__":
 
     # Setup Git
     if setupComp:
-        query = query_yes_no("(Computer only) Setup Git?")
+        query = query_yes_no("(Computer only) Configure Git properties?")
         if query:
             setupGit()
         print()
