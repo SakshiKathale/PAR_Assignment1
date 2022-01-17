@@ -28,7 +28,14 @@ Long form commands
 DELETE_COMMAND = "rm -rf "
 RSYNC_COMMAND = "rsync --archive --compress --partial --progress "
 RSYNC_CHMOD = " --chmod "
-RSYNC_EXCLUDE = " --exclude .git --exclude .bashrc --exclude devel --exclude build --exclude *.swp --exclude bin/utils/__pycache__ "
+RSYNC_EXCLUDE = (" --exclude .git " + 
+                " --exclude .bashrc" +
+                " --exclude install" +
+                " --exclude build" +
+                " --exclude log" +
+                " --exclude .catkin_workspace" +
+                " --exclude *.swp" +
+                " --exclude bin/utils/__pycache__ ")
 RSYNC_SUDO = " --rsync-path=\"sudo rsync\" "
 SUDO = "sudo "
 

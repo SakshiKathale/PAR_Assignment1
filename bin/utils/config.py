@@ -18,7 +18,7 @@ from utils.echo import (
 Static names/variables
 '''
 husarion_workspace = 'husarion_ws'
-rosbot_workspace = 'rosbot_workspace'
+rosbot_workspace = 'aiil_workspace'
 '''
 Location of bin directory
 '''
