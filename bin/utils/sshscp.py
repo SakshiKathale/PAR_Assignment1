@@ -30,6 +30,7 @@ RSYNC_COMMAND = "rsync --archive --compress --partial --progress "
 RSYNC_CHMOD = " --chmod "
 RSYNC_EXCLUDE = (" --exclude .git " + 
                 " --exclude .bashrc" +
+                " --exclude devel" +
                 " --exclude install" +
                 " --exclude build" +
                 " --exclude log" +
