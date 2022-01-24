@@ -3,7 +3,6 @@
 config/*.zip
 config/greengrass*
 config/ssh_config
-#config/setup_ROSbot_for_gg.sh
 config/root.ca.pem
 
 # Save files
