@@ -121,7 +121,7 @@ def setupBash():
     bashFile.write("export PATH=\"$AIIL_CHECKOUT_DIR/bin:$PATH\"\n")
     bashFile.write("\n")
     bashFile.write("# Source our Meldoic workspace\n")
-    bashFile.write("source $AIIL_CHECKOUT_DIR/melodic_workspace/devel/setup.bash\n")
+    bashFile.write("source $AIIL_CHECKOUT_DIR/noetic_workspace/devel/setup.bash\n")
     bashFile.close()
 
     # Query if user wishes to automatically source rosbot
