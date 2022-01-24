@@ -53,7 +53,7 @@ def catkin_make_aiil():
 Root directory of Codebase
 '''
 def checkoutDirectory():
-    return getEnvParameter('ROSBOT_CHECKOUT_DIR')
+    return getEnvParameter('AIIL_CHECKOUT_DIR')
 
 '''
 Location of configuration files for ROSBot

@@ -37,8 +37,8 @@ import utils.sshscp as ssh
 fullSetupPath = os.path.abspath(__file__)
 binDir = os.path.dirname(fullSetupPath)
 configDir = os.path.abspath(binDir + "/../config/")
-ROSBOT_CHECKOUT_DIR = os.path.abspath(binDir + "/../")
-HUSARION_CHECKOUT_DIR = os.path.abspath(ROSBOT_CHECKOUT_DIR + "/../" + cfg.husarion_workspace)
+AIIL_CHECKOUT_DIR = os.path.abspath(binDir + "/../")
+HUSARION_CHECKOUT_DIR = os.path.abspath(AIIL_CHECKOUT_DIR + "/../" + cfg.husarion_workspace)
 
 # Global setup type parameters
 setupRobot      = False
@@ -99,11 +99,11 @@ def replaceAuthKeys():
 
 def setupBash():
     print_status("Configuring Bash Environment")
-    rbbBashFile = os.path.abspath(ROSBOT_CHECKOUT_DIR + "/.bashrc")
+    rbbBashFile = os.path.abspath(AIIL_CHECKOUT_DIR + "/.bashrc")
     bashrcFile = os.path.expanduser("~/.bashrc")
     
     # Create redbackbots source file
-    templateBashrc = os.path.abspath(ROSBOT_CHECKOUT_DIR + "/config/bashrc")
+    templateBashrc = os.path.abspath(AIIL_CHECKOUT_DIR + "/config/bashrc")
     shutil.copy(templateBashrc, rbbBashFile)
     print_subitem("Copying " + templateBashrc + " to " + rbbBashFile)
 
@@ -117,12 +117,12 @@ def setupBash():
     bashFile = open(rbbBashFile, "a+")
     bashFile.write("\n")
     bashFile.write("# ROSBot Environment Settings\n")
-    bashFile.write("export ROSBOT_CHECKOUT_DIR=" + ROSBOT_CHECKOUT_DIR + "\n")
+    bashFile.write("export AIIL_CHECKOUT_DIR=" + AIIL_CHECKOUT_DIR + "\n")
     bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
-    bashFile.write("export PATH=\"$ROSBOT_CHECKOUT_DIR/bin:$PATH\"\n")
+    bashFile.write("export PATH=\"$AIIL_CHECKOUT_DIR/bin:$PATH\"\n")
     bashFile.write("\n")
     bashFile.write("# Source our Meldoic workspace\n")
-    bashFile.write("source $ROSBOT_CHECKOUT_DIR/melodic_workspace/devel/setup.bash\n")
+    bashFile.write("source $AIIL_CHECKOUT_DIR/melodic_workspace/devel/setup.bash\n")
     bashFile.close()
 
     # Query if user wishes to automatically source rosbot
@@ -244,7 +244,7 @@ def setupAWSGreengrass(config):
     command = "sudo " + ggsetup
     print(command)
     shell.exec(command, hideOutput=False)
-    os.chdir(ROSBOT_CHECKOUT_DIR)
+    os.chdir(AIIL_CHECKOUT_DIR)
 
 def setupHusarionRepos(configRobots, configComputers, configSoftware):
     print_status("Setting up Husarion ROS Repositories")
@@ -292,7 +292,7 @@ def setupHusarionRepos(configRobots, configComputers, configSoftware):
                 os.chdir(wsDir)
                 command = "git pull"
                 shell.exec(command, hideOutput=False)
-                os.chdir(ROSBOT_CHECKOUT_DIR)
+                os.chdir(AIIL_CHECKOUT_DIR)
 
             else :
                 print_subitem("Cloning Repo: " + repo)
@@ -310,7 +310,7 @@ def setupHusarionRepos(configRobots, configComputers, configSoftware):
                 os.chdir(HUSARION_CHECKOUT_DIR + "/src")
                 command = "git clone " + configRepos[repo]['giturl'] + " " + repo
                 shell.exec(command, hideOutput=False)
-                os.chdir(ROSBOT_CHECKOUT_DIR)
+                os.chdir(AIIL_CHECKOUT_DIR)
 
     # Install NodeJS and NPM packages for route_admin_panel repository
     if configRepos.has_section("route_admin_panel"):
@@ -336,7 +336,7 @@ def setupHusarionRepos(configRobots, configComputers, configSoftware):
             command = "npm install "
             print_subitem(command)
             shell.exec(command, hideOutput=False)
-            os.chdir(ROSBOT_CHECKOUT_DIR)
+            os.chdir(AIIL_CHECKOUT_DIR)
 
 def setupHusarionFixes(configRobots, configComputers):
     rosversion = configRobots[setupRobotName]['rosversion']
@@ -498,14 +498,14 @@ if __name__ == "__main__":
 
 
     # Loading paths
-    print_subitem("ROSBOT_CHECKOUT_DIR = " + ROSBOT_CHECKOUT_DIR)
+    print_subitem("AIIL_CHECKOUT_DIR = " + AIIL_CHECKOUT_DIR)
     print_subitem("HUSARION_CHECKOUT_DIR = " + HUSARION_CHECKOUT_DIR)
     print_subitem("Bin Directory = " + binDir)
     print_subitem("Config Directory = " + configDir)
     print()
    
     # Check for env configuration, and configure bash
-    tmpEnv = cfg.getEnvParameter("ROSBOT_CHECKOUT_DIR", check=True)
+    tmpEnv = cfg.getEnvParameter("AIIL_CHECKOUT_DIR", check=True)
     bashLoaded = tmpEnv != ""
 
     if not bashLoaded:
@@ -521,7 +521,7 @@ if __name__ == "__main__":
     print()
 
     # Check for environment variables existing
-    ROSBOT_CHECKOUT_DIR = cfg.getEnvParameter("ROSBOT_CHECKOUT_DIR")
+    AIIL_CHECKOUT_DIR = cfg.getEnvParameter("AIIL_CHECKOUT_DIR")
     HUSARION_CHECKOUT_DIR = cfg.getEnvParameter("HUSARION_CHECKOUT_DIR")
 
     # Load configs

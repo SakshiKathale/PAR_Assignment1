@@ -1,5 +1,5 @@
 
-# This base is copied to $ROSBOT_CHECKOUT_DIR/.basrhc by the build_setup script
+# This base is copied to $AIIL_CHECKOUT_DIR/.basrhc by the build_setup script
 
 # Aliases
 alias grep='grep --color=auto'

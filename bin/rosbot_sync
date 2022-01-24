@@ -30,7 +30,7 @@ import utils.shellEscape as shell
 import utils.sshscp as scp
 
 # Global Parameters
-ROSBOT_CHECKOUT_DIR = cfg.checkoutDirectory()
+AIIL_CHECKOUT_DIR = cfg.checkoutDirectory()
 
 # Remote SSH Python object - created in main
 remote = None
@@ -64,7 +64,7 @@ def syncRosbot():
 # Main entry point
 if __name__ == "__main__":
     print_status("ROSBot Sync")
-    print_subitem("ROSBOT_CHECKOUT_DIR = "+ ROSBOT_CHECKOUT_DIR)
+    print_subitem("AIIL_CHECKOUT_DIR = "+ AIIL_CHECKOUT_DIR)
 
     # Process args
     parser = argparse.ArgumentParser(description='Sync ROSBot software. This should only be a temporary operation for quick development use. Use of git commit/checkout operations are preferred')
