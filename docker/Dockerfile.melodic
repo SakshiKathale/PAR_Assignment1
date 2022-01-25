@@ -48,7 +48,7 @@ RUN git clone https://github.com/husarion/tutorial_pkg
 RUN $ROSBOT_WS/bin/build_setup_docker.py -g
 # AIIL setup part 2 (with ENV vars)
 RUN echo force rebuild
-RUN $ROSBOT_WS/config/gitconfig.sh
+#RUN $ROSBOT_WS/config/gitconfig.sh
 # Why can't we source /root/.bashrc directly? (ENV variables are not set)
 #RUN ["/bin/bash", "-c", "source /root/.bashrc ; set | grep ROS ; $ROSBOT_WS/bin/build_setup_docker_build.py -g"]
 RUN ["/bin/bash", "-c", "source /root/rosbot_workspace/.bashrc; set | grep ROS ; $ROSBOT_WS/bin/build_setup_docker_build.py -g"]
