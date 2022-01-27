@@ -1,59 +1,68 @@
-FROM osrf/ros:melodic-desktop-full
+FROM osrf/ros:melodic-desktop-full AS melodic-full
 
-# Optional: comment it out if it causes problems
-COPY 02proxy /etc/apt/apt.conf.d/02proxy
+# Ensure latest distribution
+RUN apt-get update && \
+    apt -y dist-upgrade
 
+# Install base dependencies & linux shell tools
 RUN apt update && \
-    # Install some base dependencies
     apt install -y \
-        iproute2 host wget less sudo vim-tiny iputils-ping 
-
-RUN apt update && \
-    # Install some base dependencies
-    apt install -y \
-        python3 git
-
-RUN apt-get update && apt -y dist-upgrade
-
-RUN apt update && \
-    # Install some base dependencies
-    apt install -y \
-        python3-apt \
         apt-utils \
-        # Required for installing dependencies
-        python-rosdep \
-        # Preferred build tool
-        python-catkin-tools
+        bash \
+        curl \
+        host \
+        iproute2 \
+        iputils-ping \
+        less \
+        rsync \
+        sudo \
+        vim \
+        wget \
+        xterm \
+        zsh
 
+# Install development/build software
 RUN apt update && \
     # Install some base dependencies
     apt install -y \
-        vim xterm
+        build-essential \
+        cmake \
+        git \
+        nodejs \
+        python3 \
+        python3-apt \
+        python-catkin-tools \
+        python-rosdep
 
-ENV ROSBOT_WS=/root/rosbot_workspace
+FROM melodic-full AS rmit-par-melodic
 
-RUN echo force rebuild from here
-COPY bin $ROSBOT_WS/bin
-COPY config $ROSBOT_WS/config
-COPY melodic_workspace $ROSBOT_WS/melodic_workspace
+# ENV ROSBOT_WS=/root/rosbot_workspace
 
-# Subsumed by AIIL build
-#RUN /root/bin/catkin/catkin_init_husarion melodic
-#RUN /root/bin/catkin/catkin_make_husarion
+# RUN echo force rebuild from here
+# COPY bin $ROSBOT_WS/bin
+# COPY config $ROSBOT_WS/config
+# COPY melodic_workspace $ROSBOT_WS/melodic_workspace
 
-WORKDIR /root/husarion_ws/src
-RUN git clone https://github.com/husarion/tutorial_pkg
+# WORKDIR /root/husarion_ws/src
+# RUN git clone https://github.com/husarion/tutorial_pkg
 
 # AIIL setup part 1
-RUN $ROSBOT_WS/bin/build_setup_docker.py -g
+# RUN $ROSBOT_WS/bin/build_setup_docker.py -g
 # AIIL setup part 2 (with ENV vars)
-RUN echo force rebuild
-#RUN $ROSBOT_WS/config/gitconfig.sh
+# RUN echo force rebuild
+
 # Why can't we source /root/.bashrc directly? (ENV variables are not set)
-#RUN ["/bin/bash", "-c", "source /root/.bashrc ; set | grep ROS ; $ROSBOT_WS/bin/build_setup_docker_build.py -g"]
-RUN ["/bin/bash", "-c", "source /root/rosbot_workspace/.bashrc; set | grep ROS ; $ROSBOT_WS/bin/build_setup_docker_build.py -g"]
+# RUN ["/bin/bash", "-c", "source /root/rosbot_workspace/.bashrc; set | grep ROS ; $ROSBOT_WS/bin/build_setup_docker_build.py -g"]
 
-RUN echo 'source ~/rosbot_workspace/melodic_workspace/devel/setup.bash' >> /root/rosbot_workspace/.bashrc
+# RUN echo 'source ~/rosbot_workspace/melodic_workspace/devel/setup.bash' >> /root/rosbot_workspace/.bashrc
 
-COPY guest-runner /root/guest-runner
-RUN chmod a+rx /root/guest-runner
+# COPY guest-runner /root/guest-runner
+# RUN chmod a+rx /root/guest-runner
+
+
+# CDI specifc image (using Multi-stage image build)
+FROM melodic-full AS rmit-cdi-rack
+
+# CDI Rack proxy
+# Optional: comment it out if it causes problems
+COPY docker/cdi-proxy /etc/apt/apt.conf.d/02proxy
