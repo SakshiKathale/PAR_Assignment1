@@ -1,0 +1,94 @@
+FROM osrf/ros:noetic-desktop-full AS noetic-full
+
+# Ensure latest distribution
+RUN apt-get update && \
+    apt -y dist-upgrade
+
+# Install base dependencies & linux shell tools
+RUN apt update && \
+    apt install -y \
+        apt-utils \
+        bash \
+        curl \
+        host \
+        iproute2 \
+        iputils-ping \
+        less \
+        rsync \
+        sudo \
+        vim \
+        wget \
+        xterm \
+        zsh
+
+# Install development/build software
+RUN apt update && \
+    apt install -y \
+        build-essential \
+        cmake \
+        git \
+        nodejs \
+        python3 \
+        python3-apt \
+        python3-catkin-tools
+        #python-rosdep
+
+FROM noetic-full AS rmit-par-noetic
+
+# Install additional ROS packages needed for PAR
+RUN apt update && \ 
+    apt install -y \
+        ros-noetic-amcl \
+        ros-noetic-compressed-depth-image-transport \
+        ros-noetic-compressed-image-transport \
+        ros-noetic-explore-lite \
+        ros-noetic-find-object-2d \
+        ros-noetic-joint-state-publisher-gui \
+        ros-noetic-map-server \
+        ros-noetic-rosbridge-suite \
+        ros-noetic-teleop-twist-keyboard \
+        ros-noetic-turtlesim \
+        ros-noetic-tf2-eigen \
+        ros-noetic-tf2-geometry-msgs \
+        ros-noetic-vision-opencv
+
+# Clone Husarion repositories
+WORKDIR /root/husarion_ws/src
+RUN git clone https://github.com/husarion/husarion_ros
+RUN git clone https://github.com/husarion/rosbot_description
+RUN git clone https://github.com/husarion/tutorial_pkg
+#RUN git clone https://github.com/husarion/route_admin_panel
+
+# Ensure husarion workspace is sourced
+RUN echo 'source ~/husarion_ws/devel/setup.bash' >> /root/.bashrc
+
+# Setup AIIL infrastructure
+ENV AIIL_CHECKOUT_DIR=/root/aiil_workspace
+
+# Copy Required AIIL workspace files.
+# Note, noetic workspace is not copied, as this is dynamic code and it's mounted instead
+COPY bin $AIIL_CHECKOUT_DIR/bin
+COPY config $AIIL_CHECKOUT_DIR/config
+COPY docker $AIIL_CHECKOUT_DIR/docker
+#COPY noetic_workspace $AIIL_CHECKOUT_DIR/noetic_workspace
+
+# Run build setup script (docker version)
+# RUN $ROSBOT_WS/bin/build_setup_docker.py -g
+# AIIL setup part 2 (with ENV vars)
+# RUN echo force rebuild
+
+# Why can't we source /root/.bashrc directly? (ENV variables are not set)
+# RUN ["/bin/bash", "-c", "source /root/rosbot_workspace/.bashrc; set | grep ROS ; $ROSBOT_WS/bin/build_setup_docker_build.py -g"]
+
+# RUN echo 'source ~/rosbot_workspace/melodic_workspace/devel/setup.bash' >> /root/rosbot_workspace/.bashrc
+
+# COPY guest-runner /root/guest-runner
+# RUN chmod a+rx /root/guest-runner
+
+
+# CDI specifc image (using Multi-stage image build)
+FROM rmit-par-noetic AS rmit-cdi-rack
+
+# CDI Rack proxy
+# Optional: comment it out if it causes problems
+COPY docker/cdi-proxy /etc/apt/apt.conf.d/02proxy
