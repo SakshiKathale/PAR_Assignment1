@@ -29,8 +29,8 @@ RUN apt update && \
         git \
         nodejs \
         python3 \
-        python3-apt \
-        python3-catkin-tools
+        python3-apt 
+        #python3-catkin-tools
         #python-rosdep
 
 FROM noetic-full AS rmit-par-noetic
@@ -43,6 +43,7 @@ RUN apt update && \
         ros-noetic-compressed-image-transport \
         ros-noetic-explore-lite \
         ros-noetic-find-object-2d \
+        ros-noetic-grid-map \
         ros-noetic-joint-state-publisher-gui \
         ros-noetic-map-server \
         ros-noetic-rosbridge-suite \
@@ -59,8 +60,15 @@ RUN git clone https://github.com/husarion/rosbot_description
 RUN git clone https://github.com/husarion/tutorial_pkg
 #RUN git clone https://github.com/husarion/route_admin_panel
 
+# Configure and build Husarion Repos
+WORKDIR /root/husarion_ws
+RUN ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash; set | grep ROS ; catkin_make"]
+
+# Reset WORKDIR
+WORKDIR /root
+
 # Ensure husarion workspace is sourced
-RUN echo 'source ~/husarion_ws/devel/setup.bash' >> /root/.bashrc
+RUN echo "\n# Husarion Source\nsource ~/husarion_ws/devel/setup.bash" >> /root/.bashrc
 
 # Setup AIIL infrastructure
 ENV AIIL_CHECKOUT_DIR=/root/aiil_workspace
@@ -85,6 +93,8 @@ COPY docker $AIIL_CHECKOUT_DIR/docker
 # COPY guest-runner /root/guest-runner
 # RUN chmod a+rx /root/guest-runner
 
+# Reset WORKDIR
+WORKDIR /root
 
 # CDI specifc image (using Multi-stage image build)
 FROM rmit-par-noetic AS rmit-cdi-rack
