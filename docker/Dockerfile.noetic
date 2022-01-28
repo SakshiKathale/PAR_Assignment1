@@ -80,8 +80,14 @@ COPY config $AIIL_CHECKOUT_DIR/config
 COPY docker $AIIL_CHECKOUT_DIR/docker
 #COPY noetic_workspace $AIIL_CHECKOUT_DIR/noetic_workspace
 
-# Run build setup script (docker version)
-# RUN $ROSBOT_WS/bin/build_setup_docker.py -g
+# Run AIIL build setup script (docker version)
+WORKDIR $AIIL_CHECKOUT_DIR
+RUN ["/bin/bash", "-c", "$AIIL_CHECKOUT_DIR/bin/build_setup.py -d "]
+
+# TODO: setting /etc/hosts cannot be done in Docker during build (https://stackoverflow.com/questions/38302867/how-to-update-etc-hosts-file-in-docker-image-during-docker-build)
+# This operation must be configured in docker-compose
+#RUN ["/bin/bash", "-c", "$AIIL_CHECKOUT_DIR/bin/manage_hosts.py -g "]
+
 # AIIL setup part 2 (with ENV vars)
 # RUN echo force rebuild
 

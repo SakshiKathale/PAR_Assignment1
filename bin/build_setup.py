@@ -327,6 +327,9 @@ def setupHostsAliases(configRobots, configComputers):
     elif setupComp:
         command = commandBase + " -c " + setupCompName
         shell.exec(command, hideOutput=False)
+    elif setupDocker:
+        command = commandBase + " -g"
+        shell.exec(command, hideOutput=False)
 
 def setupSSHConfig(configRobots, configComputers):
     print_status("Setting up SSH Config")
@@ -417,58 +420,8 @@ def setupSSHKeys():
             shell.exec(command)
         else:
             print_subitem("Key already in authorized keys")
-    
 
-# Main entry point
-if __name__ == "__main__":
-    print_status("Commencing Build Setup")
-    print_warning("If you are unsure about any answer, always select yes (Y)")
-   
-    # Process args
-    parser = argparse.ArgumentParser(description='Setup the build for a robot/computer')
-    parser.add_argument('-r', dest="robot", type=str, help='Robot to setup Build for (conflicts with "computer")')
-    parser.add_argument('-c', dest="computer", type=str, help='Computer to setup Build for (conflicts with "robot")')
-    parser.add_argument('-g', dest="general", action='store_true', help='Configure a General Computer/Device')
-    parser.add_argument('-d', dest="docker", action='store_true', help='Configure a Docker environment')
-    args = parser.parse_args()
-    setupCount = 0
-    if (args.robot is not None):
-        setupRobot = True
-        setupRobotName = args.robot
-        setupCount += 1
-    if (args.computer is not None):
-        setupComp = True
-        setupCompName = args.computer
-        setupCount += 1
-    if args.general:
-        setupComp = True
-        setupCompName = 'general'
-        setupCount += 1
-    if args.docker:
-        setupDocker = True
-        setupCount += 1
-    if (not setupRobot) and (not setupComp) and (not setupDocker):
-        print_error("No selection of Robot, Computer or Docker")
-        parser.print_help()
-        exit()
-    if setupCount > 1:
-        print_error("Cannot setup for multiple forms, choose only one")
-        parser.print_help()
-        exit()
-
-    if setupRobot:
-        print_status("Running Setup for ROBOT: " + setupRobotName)
-    elif setupComp:
-        print_status("Running Setup for COMPUTER " + setupCompName)
-
-
-    # Loading paths
-    print_subitem("AIIL_CHECKOUT_DIR = " + AIIL_CHECKOUT_DIR)
-    print_subitem("HUSARION_CHECKOUT_DIR = " + HUSARION_CHECKOUT_DIR)
-    print_subitem("Bin Directory = " + binDir)
-    print_subitem("Config Directory = " + configDir)
-    print()
-   
+def _main_setup():
     # Check for env configuration, and configure bash
     tmpEnv = cfg.getEnvParameter("AIIL_CHECKOUT_DIR", check=True)
     bashLoaded = tmpEnv != ""
@@ -565,6 +518,84 @@ if __name__ == "__main__":
         setupBuildHusarion(configRobots, configComputers, config)
         setupBuildRosbot(configRobots, configComputers)
     print()
+
+def _main_setupDocker():
+    print_status("Setup for Docker environment")
+
+    # Check for environment variables existing, otherwise set manually
+    tmpEnv = cfg.getEnvParameter("AIIL_CHECKOUT_DIR", check=True)
+    if tmpEnv != "":
+        AIIL_CHECKOUT_DIR = tmpEnv
+    
+    tmpEnv = cfg.getEnvParameter("HUSARION_CHECKOUT_DIR", check=True)
+    if tmpEnv != "":
+        HUSARION_CHECKOUT_DIR = tmpEnv
+
+    # Load configs
+    configRobots = cfg.loadConfigFile(configDir + "/robots.cfg")
+    configComputers = cfg.loadConfigFile(configDir + "/computers.cfg")
+
+    # Setup SSH COnfig
+    setupSSHConfig(configRobots, configComputers)
+
+    # Setup hosts file
+    #setupHostsAliases(configRobots, configComputers)
+
+# Main entry point
+if __name__ == "__main__":
+    print_status("Commencing Build Setup")
+    print_warning("If you are unsure about any answer, always select yes (Y)")
+   
+    # Process args
+    parser = argparse.ArgumentParser(description='Setup the build for a robot/computer')
+    parser.add_argument('-r', dest="robot", type=str, help='Robot to setup Build for (conflicts with "computer")')
+    parser.add_argument('-c', dest="computer", type=str, help='Computer to setup Build for (conflicts with "robot")')
+    parser.add_argument('-g', dest="general", action='store_true', help='Configure a General Computer/Device')
+    parser.add_argument('-d', dest="docker", action='store_true', help='Configure a Docker environment')
+    args = parser.parse_args()
+    setupCount = 0
+    if (args.robot is not None):
+        setupRobot = True
+        setupRobotName = args.robot
+        setupCount += 1
+    if (args.computer is not None):
+        setupComp = True
+        setupCompName = args.computer
+        setupCount += 1
+    if args.general:
+        setupComp = True
+        setupCompName = 'general'
+        setupCount += 1
+    if args.docker:
+        setupDocker = True
+        setupCount += 1
+    if (not setupRobot) and (not setupComp) and (not setupDocker):
+        print_error("No selection of Robot, Computer or Docker")
+        parser.print_help()
+        exit()
+    if setupCount > 1:
+        print_error("Cannot setup for multiple forms, choose only one")
+        parser.print_help()
+        exit()
+
+    if setupRobot:
+        print_status("Running Setup for ROBOT: " + setupRobotName)
+    elif setupComp:
+        print_status("Running Setup for COMPUTER " + setupCompName)
+
+
+    # Loading paths
+    print_subitem("AIIL_CHECKOUT_DIR = " + AIIL_CHECKOUT_DIR)
+    print_subitem("HUSARION_CHECKOUT_DIR = " + HUSARION_CHECKOUT_DIR)
+    print_subitem("Bin Directory = " + binDir)
+    print_subitem("Config Directory = " + configDir)
+    print()
+
+    # Use setup based on robot/comp or docker
+    if setupComp or setupRobot:
+        _main_setup()
+    elif setupDocker:
+        _main_setupDocker()
 
     print_status("Build Setup Complete")
 
