@@ -45,6 +45,7 @@ setupRobot      = False
 setupRobotName  = None
 setupComp       = False
 setupCompName   = None
+setupDocker     = False
 
 def installSoftware(software, ros=False, rosversion='none'):
     # Ensure NPM is available
@@ -428,22 +429,30 @@ if __name__ == "__main__":
     parser.add_argument('-r', dest="robot", type=str, help='Robot to setup Build for (conflicts with "computer")')
     parser.add_argument('-c', dest="computer", type=str, help='Computer to setup Build for (conflicts with "robot")')
     parser.add_argument('-g', dest="general", action='store_true', help='Configure a General Computer/Device')
+    parser.add_argument('-d', dest="docker", action='store_true', help='Configure a Docker environment')
     args = parser.parse_args()
+    setupCount = 0
     if (args.robot is not None):
         setupRobot = True
         setupRobotName = args.robot
+        setupCount += 1
     if (args.computer is not None):
         setupComp = True
         setupCompName = args.computer
+        setupCount += 1
     if args.general:
         setupComp = True
         setupCompName = 'general'
-    if (not setupRobot) and (not setupComp):
-        print_error("No selection of Robot or Computer")
+        setupCount += 1
+    if args.docker:
+        setupDocker = True
+        setupCount += 1
+    if (not setupRobot) and (not setupComp) and (not setupDocker):
+        print_error("No selection of Robot, Computer or Docker")
         parser.print_help()
         exit()
-    if (setupRobot) and (setupComp):
-        print_error("Cannot setup for both robot and computer")
+    if setupCount > 1:
+        print_error("Cannot setup for multiple forms, choose only one")
         parser.print_help()
         exit()
 
