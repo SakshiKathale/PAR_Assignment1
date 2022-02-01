@@ -29,10 +29,10 @@ CMakeFiles/*
 __pycache__/*
 
 # ROS folders
-noetic_workspace/.catkin*
-noetic_workspace/build
-noetic_workspace/devel
-noetic_workspace/src/CMake*
+melodic_workspace/.catkin*
+melodic_workspace/build
+melodic_workspace/devel
+melodic_workspace/src/CMake*
 
 # IDE Files
 *.code-workspace
