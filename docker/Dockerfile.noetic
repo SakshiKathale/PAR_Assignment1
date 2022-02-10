@@ -46,6 +46,7 @@ RUN apt update && \
         ros-noetic-grid-map \
         ros-noetic-joint-state-publisher-gui \
         ros-noetic-map-server \
+        ros-noetic-rgbd-launch \
         ros-noetic-rosbridge-suite \
         ros-noetic-teleop-twist-keyboard \
         ros-noetic-turtlesim \
