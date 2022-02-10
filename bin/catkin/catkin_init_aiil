@@ -4,6 +4,6 @@ echo "Running catkin_init for AIIL ROSBot Melodic Workspace. Overlaying on Husar
 
 source $HUSARION_CHECKOUT_DIR/devel/setup.bash
 
-cd $AIIL_CHECKOUT_DIR/melodic_workspace/
+cd $AIIL_CHECKOUT_DIR/noetic_workspace/
 catkin_make
 
