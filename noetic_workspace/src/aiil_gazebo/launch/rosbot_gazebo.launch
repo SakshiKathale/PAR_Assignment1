@@ -3,19 +3,15 @@
 <!-- 
    This is a common launch file for spawning the ROSbot. 
    This file is included by the world launch files.
+   It launches the common package elements needed for most simulations.
 -->
 <launch>
-   <!-- Load Xacro URDF model of the ROSbot -->
-   <param name="robot_description" command="$(find xacro)/xacro.py '$(find rosbot_description)/urdf/rosbot.xacro'"/>
+   <!-- Ensure simulation time is set -->
+   <param name="use_sim_time" value="true"/>
 
-   <!-- Control joint states -->
-   <rosparam command="load" file="$(find joint_state_controller)/joint_state_controller.yaml" />
-   <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" />
+    <!-- Launch ROSbot Gazebo model from the rosbot_description package -->
+    <include file="$(find rosbot_description)/launch/rosbot_gazebo.launch" />
 
-   <!-- Spawn the robot into a Gazebo world -->
-   <node name="rosbot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model rosbot" />
-
-   <!-- Publish the joint states out of Gazebo -->
-   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
-
+    <!-- Launch Mapping and navigation stack using same configuration as real-robot -->
+    <include file="$(find aiil_rosbot_demo)/launch/navigation.launch" />
 </launch>

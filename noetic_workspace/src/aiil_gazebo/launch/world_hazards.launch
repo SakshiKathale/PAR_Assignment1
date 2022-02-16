@@ -1,4 +1,7 @@
 <launch>
+   <!-- Ensure simulation time is set -->
+   <param name="use_sim_time" value="true"/>
+
    <!-- Always set GUI to false for AWS RoboMaker Simulation
         Use gui:=true on roslaunch command-line to run with a gui.
    -->
@@ -17,6 +20,6 @@
    </include>
 
    <!-- Include launch file to spawn rosbot -->
-   <include file="$(find aiil_gazebo)/launch/rosbot_gazebo.launch">
+   <include file="$(find aiil_gazebo)/launch/rosbot_gazebo.launch" />
 </launch>
 
