@@ -1,0 +1,10 @@
+<launch>
+   
+   <!-- Launch empty Gazebo world -->
+   <include file="$(find aiil_gazebo)/launch/base_world.launch">
+      <!-- Note: the world file is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+      <arg name="world_file" value="$(find rosbot_gazebo)/worlds/image_teaching.world"/>
+   </include>
+
+</launch>
+

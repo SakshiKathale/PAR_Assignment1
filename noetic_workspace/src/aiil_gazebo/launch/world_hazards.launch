@@ -1,25 +1,9 @@
 <launch>
-   <!-- Ensure simulation time is set -->
-   <param name="use_sim_time" value="true"/>
 
-   <!-- Always set GUI to false for AWS RoboMaker Simulation
-        Use gui:=true on roslaunch command-line to run with a gui.
-   -->
-   <!--arg name="gui" default="false"/-->
-   <arg name="gui" default="true"/>
-
-   <!-- Spawn maze with hazard symbols -->
-   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-      <arg name="world_name" value="$(find aiil_gazebo)/worlds/hazards.world"/>
-      <arg name="paused" default="false"/>
-      <arg name="use_sim_time" default="true"/>
-      <arg name="gui" default="$(arg gui)"/>
-      <arg name="headless" default="false"/>
-      <arg name="debug" default="false"/>
-      <arg name="verbose" default="true"/>
+   <!-- Launch Maze world with Hazard signs loaded -->
+   <include file="$(find aiil_gazebo)/launch/base_world.launch">
+      <arg name="world_file" value="$(find aiil_gazebo)/worlds/hazards.world"/>
    </include>
 
-   <!-- Include launch file to spawn rosbot -->
-   <include file="$(find aiil_gazebo)/launch/rosbot_gazebo.launch" />
 </launch>
 
