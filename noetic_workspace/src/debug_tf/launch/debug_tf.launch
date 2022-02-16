@@ -1,5 +1,0 @@
-  <launch>
-    <node pkg="learning_tf2" type="turtle_tf_listener_debug"
-          args="/turtle1" name="turtle_tf_listener_debug" />
-
-  </launch>
