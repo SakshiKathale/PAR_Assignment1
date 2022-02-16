@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+   This is a common launch file for spawning the ROSbot. 
+   This file is included by the world launch files.
+-->
 <launch>
+   <!-- Load Xacro URDF model of the ROSbot -->
+   <param name="robot_description" command="$(find xacro)/xacro.py '$(find rosbot_description)/urdf/rosbot.xacro'"/>
 
-  <rosparam command="load" file="$(find joint_state_controller)/joint_state_controller.yaml" />
-  <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" />
+   <!-- Control joint states -->
+   <rosparam command="load" file="$(find joint_state_controller)/joint_state_controller.yaml" />
+   <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" />
 
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find rosbot_description)/urdf/rosbot.xacro'"/>
+   <!-- Spawn the robot into a Gazebo world -->
+   <node name="rosbot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model rosbot" />
 
-  <node name="rosbot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model rosbot" />
-
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+   <!-- Publish the joint states out of Gazebo -->
+   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 
 </launch>

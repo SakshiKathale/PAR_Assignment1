@@ -2,7 +2,7 @@
 <package format="2">
   <name>aiil_gazebo</name>
   <version>0.0.0</version>
-  <description>The aiil_gazebo package</description>
+  <description>The aiil_gazebo package for launching gazebo simulations with the ROSbot</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <maintainer email="timothy.wiley@rmit.edu.au">Dr. Timothy Wiley</maintainer>
@@ -11,7 +11,7 @@
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>RMIT IP - Not for public release</license>
+  <license>Copyright RMIT University</license>
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
@@ -21,20 +21,12 @@
   <author email="timothy.wiley@rmit.edu.au">Timothy Wiley</author>
 
   <!-- Dependencies can be catkin packages or system dependencies -->
-  <!--   <depend>roscpp</depend> -->
-  <!--   <build_depend>message_generation</build_depend> -->
-  <!--   <build_export_depend>message_generation</build_export_depend> -->
-  <!--   <buildtool_depend>catkin</buildtool_depend> -->
-  <!--   <exec_depend>message_runtime</exec_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <exec_depend>husarion_ros</exec_depend>
-  <exec_depend>aiil_rosbot_demo</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>move_base</exec_depend>
   <exec_depend>move_base_msgs</exec_depend>
   <exec_depend>rosbot_description</exec_depend>
-  <exec_depend>rplidar_ros</exec_depend>
-  <exec_depend>rosbot_ekf</exec_depend>
 
   <!-- Gazebo dependencies -->
   <exec_depend>gazebo_ros</exec_depend>
