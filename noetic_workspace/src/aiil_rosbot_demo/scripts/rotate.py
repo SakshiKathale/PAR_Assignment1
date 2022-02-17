@@ -27,7 +27,6 @@ def drive():
     rate = rospy.Rate(10)
     while (not stop) and (not rospy.is_shutdown()):
         cmd.angular.z = speed
-        rospy.loginfo(cmd)
         pub_drive.publish(cmd)
         rate.sleep()
         
