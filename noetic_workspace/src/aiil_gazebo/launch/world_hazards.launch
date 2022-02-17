@@ -1,0 +1,9 @@
+<launch>
+
+   <!-- Launch Maze world with Hazard signs loaded -->
+   <include file="$(find aiil_gazebo)/launch/base_world.launch">
+      <arg name="world_file" value="$(find aiil_gazebo)/worlds/hazards.world"/>
+   </include>
+
+</launch>
+

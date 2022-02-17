@@ -1,0 +1,13 @@
+material AIILHazardflammablesolid/Marker
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture flammablesolid.png
+			}
+		}
+	}
+}

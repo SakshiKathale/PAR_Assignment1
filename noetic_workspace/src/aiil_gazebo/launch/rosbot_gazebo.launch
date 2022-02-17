@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+   This is a common launch file for spawning the ROSbot. 
+   This file is included by the world launch files.
+   It launches the common package elements needed for most simulations.
+-->
+<launch>
+   <!-- Ensure simulation time is set -->
+   <param name="use_sim_time" value="true"/>
+
+    <!-- Launch ROSbot Gazebo model from the rosbot_description package -->
+    <include file="$(find rosbot_description)/launch/rosbot_gazebo.launch" />
+
+    <!-- Launch Mapping and navigation stack using same configuration as real-robot -->
+    <include file="$(find aiil_rosbot_demo)/launch/navigation.launch" />
+
+
+    <!-- Image processing stack (from astra_launch package) -->
+    <!-- Load standard constellation of processing nodelets -->
+    <arg name="manager"                         default="camera_nodelet_manager" />
+    <arg name="rgb"                             default="rgb" />
+    <arg name="ir"                              default="ir" />
+    <arg name="depth"                           default="depth" />
+    <arg name="respawn"                         default="true" />
+    <arg name="rgb_processing"                  default="true"  />
+    <arg name="debayer_processing"              default="true" />
+    <arg name="ir_processing"                   default="false" />
+    <arg name="depth_processing"                default="true" />
+    <arg name="depth_registered_processing"     default="true" />
+    <arg name="disparity_processing"            default="true" />
+    <arg name="disparity_registered_processing" default="true" />
+    <arg name="hw_registered_processing"        default="true" />
+    <arg name="sw_registered_processing"        default="true" />
+    <include file="$(find rgbd_launch)/launch/includes/processing.launch.xml">
+      <arg name="manager"                         value="$(arg manager)" />
+      <arg name="rgb"                             value="$(arg rgb)" />
+      <arg name="ir"                              value="$(arg ir)" />
+      <arg name="depth"                           value="$(arg depth)" />
+      <arg name="respawn"                         value="$(arg respawn)" />
+      <arg name="rgb_processing"                  value="$(arg rgb_processing)" />
+      <arg name="debayer_processing"              value="$(arg debayer_processing)" />
+      <arg name="ir_processing"                   value="$(arg ir_processing)" />
+      <arg name="depth_processing"                value="$(arg depth_processing)" />
+      <arg name="depth_registered_processing"     value="$(arg depth_registered_processing)" />
+      <arg name="disparity_processing"            value="$(arg disparity_processing)" />
+      <arg name="disparity_registered_processing" value="$(arg disparity_registered_processing)" />
+      <arg name="hw_registered_processing"        value="$(arg hw_registered_processing)" />
+      <arg name="sw_registered_processing"        value="$(arg sw_registered_processing)" />
+    </include>    
+</launch>
