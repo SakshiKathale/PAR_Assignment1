@@ -10,7 +10,6 @@ project(aiil_gazebo)
 find_package(catkin REQUIRED COMPONENTS
   husarion_ros
   rosbot_description
-  aiil_rosbot_demo
 )
 
 ## System dependencies are found with CMake's conventions
