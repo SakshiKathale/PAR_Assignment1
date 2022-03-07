@@ -398,7 +398,7 @@ def setupSSHConfigAdd(sshFile, name, ip):
 def setupSSHKeys():
     print_status("Setting up SSH Keys")
     pubkeyFile = ssh.pubicKeyFile
-    authkeyFile = ssh.authKeyFile
+    authkeyFile = ssh.authKeyFile()
     print_subitem("pub key file: " + pubkeyFile)
     print_subitem("authorized_keys file: " + authkeyFile)
 
