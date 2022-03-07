@@ -3,12 +3,27 @@
 '''
 Util methods for capturing or running shell commands
 '''
-
+from utils.echo import (
+    print_error,
+    print_status,
+    print_warning
+)
 import subprocess
 
-def capture(command):
-    data = subprocess.check_output(command, shell=True)
-    return data.decode('utf-8').rstrip()
+def capture(command, emptyFail=False):
+    retVal = None
+    
+    try:
+        data = subprocess.check_output(command, shell=True)
+        retVal = data.decode('utf-8').rstrip()
+    except subprocess.CalledProcessError as err:
+        if not emptyFail:
+            print_error("Subprocess cal error: {0}".format(err))
+            raise
+        else:
+            retVal = ""
+    
+    return retVal
 
 ''' 
 Execute the command

@@ -197,7 +197,7 @@ def setupGit():
     print_status("Checking your Git Configuration")
     gitParams = ["user.name", "user.email", "pull.rebase"]
     for param in gitParams:
-        value = shell.capture(["git config " + param])
+        value = shell.capture(["git config " + param], emptyFail=True)
         print("git config " + param + " = " + value)
 
     query = query_yes_no("Are these details correct?")
