@@ -1,6 +1,6 @@
 <launch>
-    <arg name="teach" default="true"/>
-    <arg name="recognize" default="false"/>
+    <arg name="teach" default="false"/>
+    <arg name="recognize" default="true"/>
 
     <arg if="$(arg recognize)" name="chosen_world" value="rosbot_world_recognition"/>
 
