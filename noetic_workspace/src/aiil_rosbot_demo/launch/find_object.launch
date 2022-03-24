@@ -1,10 +1,8 @@
 <launch>
-    <arg name="teach" default="false"/>
-    <arg name="recognize" default="true"/>
+    <arg name="teach" default="true"/>
+    <arg name="recognize" default="false"/>
 
     <arg if="$(arg recognize)" name="chosen_world" value="rosbot_world_recognition"/>
-
-    <include file="$(find aiil_rosbot_demo)/launch/rosbot_pro.launch"/>
 
     <node pkg="find_object_2d" type="find_object_2d" name="find_object_2d">
         <remap from="image" to="/camera/rgb/image_raw"/>
