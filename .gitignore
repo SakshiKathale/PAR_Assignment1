@@ -33,6 +33,7 @@ noetic_workspace/.catkin*
 noetic_workspace/build
 noetic_workspace/devel
 noetic_workspace/src/CMake*
+noetic_workspace/src/aiil_rosbot_demo/image_rec/
 
 # IDE Files
 *.code-workspace
