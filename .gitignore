@@ -32,6 +32,7 @@ __pycache__/*
 noetic_workspace/.catkin*
 noetic_workspace/build
 noetic_workspace/devel
+noetic_workspace/logs
 noetic_workspace/src/CMake*
 noetic_workspace/src/aiil_rosbot_demo/image_rec/
 
