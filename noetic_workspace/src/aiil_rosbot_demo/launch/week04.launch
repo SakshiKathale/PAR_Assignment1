@@ -1,0 +1,15 @@
+<launch>
+
+    <!-- <node name="week04Error" pkg="aiil_rosbot_demo" type="week04Error.py" output="screen" >
+        <param name="speed" value="0.5" />
+        <param name="duration" value="3" />
+    </node> -->
+
+    <node name="week04pid" pkg="aiil_rosbot_demo" type="week04pid.py" output="screen" >
+        <param name="speed" value="2.0" />
+        <param name="duration" value="100" />
+        <param name="set_point" value="-1.5" />
+        <param name="gain_p" value="0.3" />
+    </node>
+
+</launch>

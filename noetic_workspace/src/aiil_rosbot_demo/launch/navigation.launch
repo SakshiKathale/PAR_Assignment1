@@ -2,7 +2,8 @@
     <!-- Choose map format from the below options -->
 
     <!-- Launch GMapping from Route Admin Panel (for dynamic map / SLAM) -->
-    <include file="$(find route_admin_panel)/launch/gmapping.launch" />
+    <!--include file="$(find route_admin_panel)/launch/gmapping.launch" /-->
+    <include file="$(find aiil_rosbot_demo)/launch/gmapping.launch" />
 
     <!-- Launch AMCL from Route Admin Panel (for static map w/ the Map Server) -->
     <!--
