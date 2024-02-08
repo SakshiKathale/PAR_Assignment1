@@ -38,6 +38,7 @@ noetic_workspace/src/aiil_rosbot_demo/image_rec/
 
 humble_workspace/build
 humble_workspace/install
+humble_workspace/log
 humble_workspace/logs
 
 # ROS projects
