@@ -117,6 +117,10 @@ def setupBash():
     # Append additional dynamic elements
     print_subitem("Updating " + rbbBashFile)
     bashFile = open(rbbBashFile, "a+")
+    if setupRobot:
+        bashFile.write("\n")
+        bashFile.write("# SSH-Agent\n")
+        bashFile.write("eval \"$(ssh-agent -s)\"\n")
     bashFile.write("\n")
     bashFile.write("# ROSBot Environment Settings\n")
     bashFile.write("export AIIL_CHECKOUT_DIR=" + AIIL_CHECKOUT_DIR + "\n")
