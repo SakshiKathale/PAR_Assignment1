@@ -1,7 +1,0 @@
-#!/bin/bash
-
-echo "Running catkin_make for husarion_ws on ROSBot"
-cd $AIIL_CHECKOUT_DIR/noetic_workspace
-source ./devel/setup.bash
-catkin_make
-

@@ -34,8 +34,8 @@ def catkin_init_husarion():
 '''
 Catkin script for initialising AIIL ROSBot
 '''
-def catkin_init_aiil():
-    return binDirectory() + "/catkin/catkin_init_aiil"
+def colcon_init_aiil():
+    return binDirectory() + "/catkin/colcon_init_aiil"
 
 '''
 Catkin script for building husarion
@@ -46,8 +46,8 @@ def catkin_make_husarion():
 '''
 Catkin script for building AIIL ROSBot
 '''
-def catkin_make_aiil():
-    return binDirectory() + "/catkin/catkin_make_aiil"
+def colcon_make_aiil():
+    return binDirectory() + "/catkin/colcon_make_aiil"
 
 '''
 Root directory of Codebase
@@ -111,7 +111,10 @@ def loadConfigFile(file):
 Location of the ROSBot Melodic workspace
 '''
 def rosbotMelodicWorkspace():
-    return checkoutDirectory() + "melodic_workspace"
+    return checkoutDirectory() + "/melodic_workspace"
+
+def rosbotHumbleWorkspace():
+    return checkoutDirectory() + "/humble_workspace"
 
 '''
 Location of ssh_config file

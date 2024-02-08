@@ -1,9 +1,0 @@
-#!/bin/bash
-
-echo "Running catkin_init for AIIL ROSBot Melodic Workspace. Overlaying on Husarion at: '$HUSARION_CHECKOUT_DIR'"
-
-source $HUSARION_CHECKOUT_DIR/devel/setup.bash
-
-cd $AIIL_CHECKOUT_DIR/noetic_workspace/
-catkin_make
-

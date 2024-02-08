@@ -36,6 +36,13 @@ noetic_workspace/logs
 noetic_workspace/src/CMake*
 noetic_workspace/src/aiil_rosbot_demo/image_rec/
 
+humble_workspace/build
+humble_workspace/install
+humble_workspace/logs
+
+# ROS projects
+humble_workspace/src/examples
+
 # IDE Files
 *.code-workspace
 .cproject

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo "Running catkin_init for AIIL ROSBot Humble Workspace."
+
+#echo "Overlaying on Husarion at: '$HUSARION_CHECKOUT_DIR'"
+#source $HUSARION_CHECKOUT_DIR/devel/setup.bash
+
+# Source ROS installation
+#source /opt/ros/humble/setup.bash
+
+cd $AIIL_CHECKOUT_DIR/humble_workspace/
+colcon build 

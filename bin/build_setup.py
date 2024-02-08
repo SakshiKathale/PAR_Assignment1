@@ -38,7 +38,7 @@ fullSetupPath = os.path.abspath(__file__)
 binDir = os.path.dirname(fullSetupPath)
 configDir = os.path.abspath(binDir + "/../config/")
 AIIL_CHECKOUT_DIR = os.path.abspath(binDir + "/../")
-HUSARION_CHECKOUT_DIR = os.path.abspath(AIIL_CHECKOUT_DIR + "/../" + cfg.husarion_workspace)
+# HUSARION_CHECKOUT_DIR = os.path.abspath(AIIL_CHECKOUT_DIR + "/../" + cfg.husarion_workspace)
 
 # Global setup type parameters
 setupRobot      = False
@@ -50,10 +50,13 @@ setupDocker     = False
 def installSoftware(software, ros=False, rosversion='none'):
     # Ensure NPM is available
     if not ros:
-        print_status("Setup NPM package location")
-        command = "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
-        print_subitem("Running: " + command)
-        shell.exec(command, hideOutput=False)
+        if False:
+            print_status("Setup NPM package location")
+            command = "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
+            print_subitem("Running: " + command)
+            shell.exec(command, hideOutput=False)
+        else:
+            print_status("NPM not required - disabled")
 
     # Load this here to avoid script delays
     print_status("Installing Software")
@@ -91,7 +94,6 @@ def installSoftware(software, ros=False, rosversion='none'):
     else :
         print_subitem("No packages to install")
 
-
 def replaceAuthKeys():
     localAuthFile = ssh.authKeyFile()
     target = ssh.sshDirectory
@@ -108,9 +110,9 @@ def setupBash():
     print_subitem("Copying " + templateBashrc + " to " + rbbBashFile)
 
     # Set Husarion workspace based on device type
-    husDir = HUSARION_CHECKOUT_DIR
-    if setupRobot:
-        husDir = os.path.expanduser("~/" + cfg.husarion_workspace)
+    # husDir = HUSARION_CHECKOUT_DIR
+    # if setupRobot:
+        # husDir = os.path.expanduser("~/" + cfg.husarion_workspace)
     
     # Append additional dynamic elements
     print_subitem("Updating " + rbbBashFile)
@@ -118,11 +120,11 @@ def setupBash():
     bashFile.write("\n")
     bashFile.write("# ROSBot Environment Settings\n")
     bashFile.write("export AIIL_CHECKOUT_DIR=" + AIIL_CHECKOUT_DIR + "\n")
-    bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
+    # bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
     bashFile.write("export PATH=\"$AIIL_CHECKOUT_DIR/bin:$PATH\"\n")
     bashFile.write("\n")
-    bashFile.write("# Source our Meldoic workspace\n")
-    bashFile.write("source $AIIL_CHECKOUT_DIR/noetic_workspace/devel/setup.bash\n")
+    bashFile.write("# Source our ROS workspace\n")
+    bashFile.write("source $AIIL_CHECKOUT_DIR/humble_workspace/install/setup.zsh\n")
     bashFile.close()
 
     # Query if user wishes to automatically source rosbot
@@ -142,6 +144,7 @@ def setupBash():
             bashFile = open(bashrcFile, "a+")
             bashFile.write("\n")
             bashFile.write("# ROSBot Bashrc Source\n")
+            bashFile.write("source /opt/ros/humble/setup.bash \n")
             bashFile.write("source " + rbbBashFile + "\n")
             bashFile.close()
     else :
@@ -151,28 +154,11 @@ def setupBash():
     print_warning(".bashrc configuration has changed." +
                   "source the new bashrc file (using below) and re-run the setup\n" + 
                   "source " + rbbBashFile)
-    print_warning("HUSARION_CHECKOUT_DIR is set to: '" + HUSARION_CHECKOUT_DIR + "'\n. If this is not correct. Then change before relaunch")
+    # print_warning("HUSARION_CHECKOUT_DIR is set to: '" + HUSARION_CHECKOUT_DIR + "'\n. If this is not correct. Then change before relaunch")
     exit()
 
-def setupBuildHusarion(configRobots, configComputers, configSoftware):
-    # Create and configure CMake
-    print_status("Configure & Build Husarion Workspace")
-
-    # Setup Husarion Repos
-    setupHusarionRepos(configRobots, configComputers, configSoftware)
-    
-    # Fix melodic issue
-    if setupRobot:
-        setupHusarionFixes(configRobots, configComputers)
-
-    # Execute standalone catkin_make script for husarion_ws
-    print_status("Building Husarion Workspace")
-    binDir = cfg.binDirectory()
-    script = binDir + "/catkin/catkin_make_husarion"
-    shell.exec(script, hideOutput=False)
-
 def setupBuildRosbot(configRobots, configComputers):
-    print_subitem("Configure & Build AIIL ROSBot Melodic Workspace")
+    print_subitem("Configure & Build AIIL ROSBot Humble Workspace")
 
     # Setup and build go together.
     # If no devel, then run setup version to overlay on husarion workspace
@@ -180,15 +166,16 @@ def setupBuildRosbot(configRobots, configComputers):
     # Both are executed through standalone scripts
 
     # Check for exiting devel
-    melodic_workspace = cfg.rosbotMelodicWorkspace()
-    develDir = melodic_workspace + "/devel"
+    humble_workspace = cfg.rosbotHumbleWorkspace()
+    develDir = humble_workspace + "/devel"
+    print_subitem("\t Devel Directory: " + develDir)
     command = ""
     if not os.path.exists(develDir):
         # Run initialisation script
-        command = cfg.catkin_init_aiil()
+        command = cfg.colcon_init_aiil()
     else :
         # Run compilation script
-        command = cfg.catkin_make_aiil()
+        command = cfg.colcon_make_aiil()
     
     # Execute script
     shell.exec(command, hideOutput=False)
@@ -213,108 +200,6 @@ def setupGit():
     else:
         print("Skipping git configuration - details are correct")
 
-def setupHusarionRepos(configRobots, configComputers, configSoftware):
-    print_status("Setting up Husarion ROS Repositories")
-
-    # Repos Config
-    configRepos = cfg.loadConfigFile(configDir + "/repos.cfg")
-
-    # Check for Husarion Repository
-    develDir = HUSARION_CHECKOUT_DIR + "/devel"
-    if not os.path.exists(develDir):
-        # Initialise Husarion Directory
-        rosversion = 'melodic'
-        if setupRobot:
-            rosversion = configRobots[setupRobotName]['rosversion']
-        elif setupComp:
-            rosversion = configComputers[setupCompName]['rosversion']
-        
-        # Ensure directory exists
-        if not os.path.exists(HUSARION_CHECKOUT_DIR):
-            os.makedirs(HUSARION_CHECKOUT_DIR)
-
-        # Run initialisation script
-        command = cfg.catkin_init_husarion() + " " + rosversion
-        shell.exec(command, hideOutput=False)
-
-    # Iterate through each repo
-    for repo in configRepos.sections():
-        if configRepos[repo]['type'] == cfg.husarion_workspace:
-            print_subitem("Repo: " + repo)
-
-            # Check if exists
-            wsDir = HUSARION_CHECKOUT_DIR + "/src/" + repo
-            dirExists = os.path.exists(wsDir)
-
-            # Check if git version
-            gitDir = wsDir + "/.git"
-            gitExists = os.path.exists(gitDir)
-            print_subitem("\twsDir: " + wsDir)
-            print_subitem("\tgitDir: " + gitDir)
-
-            # Clone/Update
-            if gitExists:
-                # Update
-                print_subitem("Updating Repo: " + repo)
-                os.chdir(wsDir)
-                command = "git pull"
-                shell.exec(command, hideOutput=False)
-                os.chdir(AIIL_CHECKOUT_DIR)
-
-            else :
-                print_subitem("Cloning Repo: " + repo)
-                if dirExists:
-                    print_subitem("\tMoving old repo out and replacing with cloned repo")
-                    # Move out-of-way
-                    saveDir = HUSARION_CHECKOUT_DIR + "/src/" + "orig_image/."
-                    if not os.path.exists(saveDir):
-                        os.makedirs(saveDir)
-                    shutil.move(wsDir, saveDir)
-                    # Ensure catkin_ignore set
-                    shell.exec("touch " + saveDir + "/CATKIN_IGNORE")
-
-                # Clone
-                os.chdir(HUSARION_CHECKOUT_DIR + "/src")
-                command = "git clone " + configRepos[repo]['giturl'] + " " + repo
-                shell.exec(command, hideOutput=False)
-                os.chdir(AIIL_CHECKOUT_DIR)
-
-    # Install NodeJS and NPM packages for route_admin_panel repository
-    if configRepos.has_section("route_admin_panel"):
-        print_status("Installing NodeJS & NPM packages for Husarion route_admin_panel repo")
-        panelDir = HUSARION_CHECKOUT_DIR + "/src/route_admin_panel/nodejs"
-        
-        # Configure NPM packages to install
-        packages = ""
-        npmSoftware = configSoftware['NPM']
-        for pkg in npmSoftware:
-            if npmSoftware.getboolean(pkg):
-                packages += " " + pkg
-        
-        # Do install
-        print_subitem("Installing in " + panelDir)
-        if os.path.exists(panelDir):
-            os.chdir(panelDir)
-            # NPM packages
-            command = "npm install " + packages
-            print_subitem(command)
-            shell.exec(command, hideOutput=False)
-            # NPM general install
-            command = "npm install "
-            print_subitem(command)
-            shell.exec(command, hideOutput=False)
-            os.chdir(AIIL_CHECKOUT_DIR)
-
-def setupHusarionFixes(configRobots, configComputers):
-    rosversion = configRobots[setupRobotName]['rosversion']
-    if rosversion == 'melodic':
-        print_status("Fixing issues with astra_camera OpenNi Log configuration")
-        filename = HUSARION_CHECKOUT_DIR + "/src/astra_camera/ros_astra_camera-master/include/openni2_redist/x64/OpenNI.ini"
-        if os.path.exists(filename):
-            command = "sed -i 's/LogToConsole=[0-9]/LogToConsole=0/' " + filename
-            print_subitem("Executing: " + command)
-            shell.exec(command, hideOutput=True)
-
 def setupHostsAliases(configRobots, configComputers):
     print_status("Configuring /etc/hosts with manage_hosts.py tool")
     print_warning("Manage Hosts program must be run as an administrator. You may ba asked for an admin password")
@@ -330,6 +215,14 @@ def setupHostsAliases(configRobots, configComputers):
     elif setupDocker:
         command = commandBase + " -g"
         shell.exec(command, hideOutput=False)
+
+def setupRobotLocalFiles():
+    print_status("Configuring local robot files")
+    
+    print_subitem("Run Husarion robot setup script")
+    
+    print_subitem("Removing local compose/script files")
+    
 
 def setupSSHConfig(configRobots, configComputers):
     print_status("Setting up SSH Config")
@@ -429,17 +322,17 @@ def _main_setup():
     # Setup bash script
     if not bashLoaded:
         print_warning("bashrc has not been configured. Either reload or configure bash")
-        query = query_yes_no("Configure Bash? (Includes ROS envrionment parameters")
+        query = query_yes_no("Configure Bash? (Includes ROS environment parameters")
         if query:
             setupBash()
         else:
-            print_error("Cannot continue withouw bashrc being configured")
+            print_error("Cannot continue without bashrc being configured")
         exit()
     print()
 
     # Check for environment variables existing
     AIIL_CHECKOUT_DIR = cfg.getEnvParameter("AIIL_CHECKOUT_DIR")
-    HUSARION_CHECKOUT_DIR = cfg.getEnvParameter("HUSARION_CHECKOUT_DIR")
+    # HUSARION_CHECKOUT_DIR = cfg.getEnvParameter("HUSARION_CHECKOUT_DIR")
 
     # Load configs
     config = cfg.loadConfigFile(configDir + "/software.cfg")
@@ -456,11 +349,11 @@ def _main_setup():
     # Check robot/computer exists
     if setupRobot:
         if not configRobots.has_section(setupRobotName):
-            print_error("No Configuruation parmaeters for robot: " + setupRobotName)
+            print_error("No Configuration parameters for robot: " + setupRobotName)
             exit()
     if setupComp:
         if not configComputers.has_section(setupCompName):
-            print_error("No Configuruation parmaeters for robot: " + setupCompName)
+            print_error("No Configuration parameters for robot: " + setupCompName)
             exit()
 
     # Install software
@@ -471,6 +364,8 @@ def _main_setup():
 
     query = query_yes_no("Install ROS Specific Additional Packages?")
     if query:
+        print_subitem("NOTE: This requires that ROS is already installed on the platform. " +
+                      "Follow the instructions here: https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html")
         rosversion='none'
         if setupRobot:
             rosversion=configRobots[setupRobotName]["rosversion"]
@@ -505,19 +400,30 @@ def _main_setup():
             setupSSHKeys()
         print()
 
-    # Repalce authorised keys (on robot only)
+    # Replace authorised keys (on robot only)
     if setupRobot:
         query = query_yes_no("(Robot only) Replace authorised SSH keys?")
         if query:
             replaceAuthKeys()
         print()
 
+    # Setup ROSbot files and Docker
+    if setupRobot:
+        query = query_yes_no("(Robot only) Configure local files?")
+        if query:
+            setupRobotLocalFiles()
+        print()
+
     # Configure Husarion Git Repositories
-    query = query_yes_no("Configure & Build Repositories?")
-    if query:
-        setupBuildHusarion(configRobots, configComputers, config)
-        setupBuildRosbot(configRobots, configComputers)
-    print()
+    if setupComp:
+        query = query_yes_no("Configure & Build Repositories?")
+        if query:
+            if False:
+                setupBuildHusarion(configRobots, configComputers, config)
+            else:
+                print_subitem("Husarion software build not required - disabled")
+            setupBuildRosbot(configRobots, configComputers)
+        print()
 
 def _main_setupDocker():
     print_status("Setup for Docker environment")
@@ -586,7 +492,7 @@ if __name__ == "__main__":
 
     # Loading paths
     print_subitem("AIIL_CHECKOUT_DIR = " + AIIL_CHECKOUT_DIR)
-    print_subitem("HUSARION_CHECKOUT_DIR = " + HUSARION_CHECKOUT_DIR)
+    # print_subitem("HUSARION_CHECKOUT_DIR = " + HUSARION_CHECKOUT_DIR)
     print_subitem("Bin Directory = " + binDir)
     print_subitem("Config Directory = " + configDir)
     print()
