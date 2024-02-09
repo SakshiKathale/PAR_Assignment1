@@ -27,9 +27,9 @@ alias pp='popd > /dev/null; pn_stack'
 
 
 # ROS Parameter Settings
-unset ROS_IPV6
+#unset ROS_IPV6
 #unset ROS_HOSTNAME
-export ROS_HOSTNAME=`hostname`
+#export ROS_HOSTNAME=`hostname`
 
 # Function to set master
 function set_ros_master() {

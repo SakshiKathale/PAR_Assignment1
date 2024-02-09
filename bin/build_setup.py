@@ -148,7 +148,8 @@ def setupBash():
             bashFile = open(bashrcFile, "a+")
             bashFile.write("\n")
             bashFile.write("# ROSBot Bashrc Source\n")
-            bashFile.write("source /opt/ros/humble/setup.bash \n")
+            if setupComp:
+                bashFile.write("source /opt/ros/humble/setup.bash \n")
             bashFile.write("source " + rbbBashFile + "\n")
             bashFile.close()
     else :
@@ -220,13 +221,73 @@ def setupHostsAliases(configRobots, configComputers):
         command = commandBase + " -g"
         shell.exec(command, hideOutput=False)
 
+def setupNetworks(configRobots):
+    print_status("Setting up Netplan Networks")
+    
+    npFile = configDir + "/rosbot/01-network-manager-all.yaml"
+    
+    # Sed command to replace ip
+    ip = configRobots[setupRobotName]["ip"]
+    command = f"sed -i 's/ROBOT_IP/{ip}/g' {npFile}"
+    shell.exec(command, hideOutput=False)
+    
+    # Copy netplan file
+    print_subitem("Copying netplan file - requires sudo")
+    npFolder = "/etc/netplan"
+    command = f"sudo cp {npFile} {npFolder}/."
+    shell.exec(command, hideOutput=False)
+    
+    # Update netplan
+    print_subitem("Updating Netplan - requires sudo")
+    print_warning("This will reset the network, remote terminals may be disconnected")
+    command = f"sudo netplan -d apply"
+    shell.exec(command, hideOutput=False)
+    
 def setupRobotLocalFiles():
     print_status("Configuring local robot files")
     
     print_subitem("Run Husarion robot setup script")
+    command = "sudo /usr/local/sbin/setup_robot_configuration rosbot_2_pro ros2_humble"
+    shell.exec(command, hideOutput=False)
     
     print_subitem("Removing local compose/script files")
+    rosbotHome = cfg.rosbotHome()
+    toRemove = [
+        'compose.yaml',
+        'compose.vnc.yaml',
+        'flash_firmware.sh',
+        'remote_desktop_start.sh',
+        'remote_desktop_stop.sh',
+        'ros_driver_start.sh',
+        'ros_driver_stop.sh'
+    ]
+    for file in toRemove:
+        absFile = f"{rosbotHome}/{file}"
+        print_subitem(f"\t Removing {absFile}")
+        if os.path.exists(absFile):
+            os.remove(f"{absFile}")
     
+    print_subitem("Creating symlinks for files")
+    slinkBin = [
+        'remote_desktop_start.sh',
+        'remote_desktop_stop.sh',
+        'ros_driver_start.sh',
+        'ros_driver_stop.sh'
+    ]
+    slinkDocker = [
+        'compose.yaml',
+        'compose.vnc.yaml'
+    ]
+    binDir = cfg.binDirectory()
+    for file in slinkBin:
+        command = f"ln -s {binDir}/rosbot/{file} {rosbotHome}/."
+        print_subitem(f"\t {command}")
+        shell.exec(command, hideOutput=False)
+    dockerDir = cfg.dockerDirectory()
+    for file in slinkDocker:
+        command = f"ln -s {dockerDir}/rosbot/{file} {rosbotHome}/."
+        print_subitem(f"\t {command}")
+        shell.exec(command, hideOutput=False)
 
 def setupSSHConfig(configRobots, configComputers):
     print_status("Setting up SSH Config")
@@ -366,17 +427,18 @@ def _main_setup():
         installSoftware(configSoftware)
     print()
 
-    query = query_yes_no("Install ROS Specific Additional Packages?")
-    if query:
-        print_subitem("NOTE: This requires that ROS is already installed on the platform. " +
-                      "Follow the instructions here: https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html")
-        rosversion='none'
-        if setupRobot:
-            rosversion=configRobots[setupRobotName]["rosversion"]
-        else :
-            rosversion=configComputers[setupCompName]["rosversion"]
-        installSoftware(configROSSoftware, ros=True, rosversion=rosversion)
-    print()
+    if setupComp:
+        query = query_yes_no("(Comp Only) Install ROS Specific Additional Packages?")
+        if query:
+            print_subitem("NOTE: This requires that ROS is already installed on the platform. " +
+                        "Follow the instructions here: https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html")
+            rosversion='none'
+            if setupRobot:
+                rosversion=configRobots[setupRobotName]["rosversion"]
+            else :
+                rosversion=configComputers[setupCompName]["rosversion"]
+            installSoftware(configROSSoftware, ros=True, rosversion=rosversion)
+        print()
 
     # Setup Git
     if setupComp:
@@ -412,10 +474,17 @@ def _main_setup():
         print()
 
     # Setup ROSbot files and Docker
+    # Setup Networks
     if setupRobot:
         query = query_yes_no("(Robot only) Configure local files?")
         if query:
             setupRobotLocalFiles()
+            setupNetworks(configRobots)
+        else:
+            print()
+            query = query_yes_no("(Robot only) Configure Netplan Networks?")
+            if query:
+                setupNetworks(configRobots)
         print()
 
     # Configure Husarion Git Repositories

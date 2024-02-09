@@ -19,6 +19,7 @@ Static names/variables
 '''
 husarion_workspace = 'husarion_ws'
 rosbot_workspace = 'aiil_workspace'
+
 '''
 Location of bin directory
 '''
@@ -61,6 +62,11 @@ Location of configuration files for ROSBot
 def configDirectory():
     return checkoutDirectory() + "/config"
 
+'''
+Location of docker directory
+'''
+def dockerDirectory():
+    return checkoutDirectory() + "/docker"
 
 '''
 Retrieve Ennvironment parameter from executing shell
@@ -106,6 +112,12 @@ def loadConfigFile(file):
     config = configparser.ConfigParser()
     config.read(file)
     return config
+
+'''
+Rosbot root home location
+'''
+def rosbotHome():
+    return "/home/husarion"
 
 '''
 Location of the ROSBot Melodic workspace
