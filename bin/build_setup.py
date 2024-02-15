@@ -38,7 +38,7 @@ fullSetupPath = os.path.abspath(__file__)
 binDir = os.path.dirname(fullSetupPath)
 configDir = os.path.abspath(binDir + "/../config/")
 AIIL_CHECKOUT_DIR = os.path.abspath(binDir + "/../")
-HUSARION_CHECKOUT_DIR = os.path.abspath(AIIL_CHECKOUT_DIR + "/../" + cfg.husarion_workspace)
+HUSARION_CHECKOUT_DIR = os.path.abspath(AIIL_CHECKOUT_DIR + "/humble_workspace/src/" + cfg.husarion_workspace)
 
 # Global setup type parameters
 setupRobot      = False
@@ -104,6 +104,10 @@ def setupBash():
     rbbBashFile = os.path.abspath(AIIL_CHECKOUT_DIR + "/.bashrc")
     bashrcFile = os.path.expanduser("~/.bashrc")
     
+    # Find required config files
+    configDir = os.path.abspath(AIIL_CHECKOUT_DIR + "/config")
+    configRobots = cfg.loadConfigFile(configDir + "/robots.cfg")
+    
     # Create redbackbots source file
     templateBashrc = os.path.abspath(AIIL_CHECKOUT_DIR + "/config/bashrc")
     shutil.copy(templateBashrc, rbbBashFile)
@@ -124,13 +128,22 @@ def setupBash():
     bashFile.write("\n")
     bashFile.write("# ROSBot Environment Settings\n")
     bashFile.write("export AIIL_CHECKOUT_DIR=" + AIIL_CHECKOUT_DIR + "\n")
-    if setupComp:
-        bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
+    bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
     bashFile.write("export PATH=\"$AIIL_CHECKOUT_DIR/bin:$PATH\"\n")
+    
+    # Append ROS environment variables
+    if setupRobot:
+        bashFile.write("\n")
+        bashFile.write("# ROS Variables\n")
+        bashFile.write("export ROS_DOMAIN_ID=" + configRobots[setupRobotName]["ip"] + "\n")
+    
+    # Append ROS env source
     if setupComp:
         bashFile.write("\n")
         bashFile.write("# Source our ROS workspace\n")
         bashFile.write("source $AIIL_CHECKOUT_DIR/humble_workspace/install/setup.zsh\n")
+    
+    # Done
     bashFile.close()
 
     # Query if user wishes to automatically source rosbot
@@ -395,6 +408,17 @@ def _main_setup():
             setupBash()
         else:
             print_error("Cannot continue without bashrc being configured")
+        exit()
+    print()
+
+    # Setup bash script
+    if not bashLoaded:
+        print_warning("bashrc has not been configured. Either reload or configure bash")
+    query = query_yes_no("Configure Bash? (Includes ROS environment parameters")
+    if query:
+        setupBash()
+    elif not bashLoaded:
+        print_error("Cannot continue without bashrc being configured")
         exit()
     print()
 

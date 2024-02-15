@@ -17,7 +17,7 @@ from utils.echo import (
 '''
 Static names/variables
 '''
-husarion_workspace = 'husarion_ws'
+husarion_workspace = 'husarion'
 rosbot_workspace = 'aiil_workspace'
 
 '''
@@ -69,7 +69,7 @@ def dockerDirectory():
     return checkoutDirectory() + "/docker"
 
 '''
-Retrieve Ennvironment parameter from executing shell
+Retrieve Environment parameter from executing shell
 '''
 def getEnvParameter(param, check=False):
     value = ""
