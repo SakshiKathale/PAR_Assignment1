@@ -58,7 +58,9 @@ services:
     command: MicroXRCEAgent serial -D $SERIAL_PORT serial -b 576000 # -v6
 
   rosbot:
-    image: husarion/rosbot:humble-0.6.1-20230712
+    # image: husarion/rosbot:humble-0.6.1-20230712
+    # image: husarion/rosbot:humble-0.13.1-20240207
+    image: husarion/rosbot:humble-0.11.1-20231229
     container_name: rosbot
     <<: *common-config
     command: ros2 launch rosbot_bringup bringup.launch.py

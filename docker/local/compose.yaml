@@ -1,0 +1,25 @@
+x-common-config:
+  &common-config
+  restart: no
+  network_mode: host
+  ipc: host
+  # user: ${DOCKER_UID:-1000}:${DOCKER_GID:-1000} # *
+  # volumes:
+    # - /etc/group:/etc/group:ro                  # *
+    # - /etc/passwd:/etc/passwd:ro                # *
+    # - /etc/shadow:/etc/shadow:ro                # *
+    # - ${FASTRTPS_DEFAULT_PROFILES_FILE:-dummy_volume_fastdds}:${FASTRTPS_DEFAULT_PROFILES_FILE:-/dummy_volume_fastdds}:ro  # **
+    # - ${CYCLONEDDS_PATH:-dummy_volume_cyclonedds}:${CYCLONEDDS_PATH:-/dummy_volume_cyclonedds}:ro                          # **
+    
+
+services:
+  rviz2:
+    image: husarion/rviz2:humble
+    container_name: husarion_rviz2
+    <<: *common-config
+    environment:
+      - DISPLAY=${DISPLAY}
+      - ROS_DOMAIN_ID                   # ***
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /dev/dri:/dev/dri

@@ -6,10 +6,9 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /AstraCamera1
         - /AstraCamera1/Topic1
       Splitter Ratio: 0.5
-    Tree Height: 627
+    Tree Height: 472
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -76,18 +75,36 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        camera_color_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_color_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_depth_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_depth_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         camera_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        camera_orbbec_astra_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         cover_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        depth:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
+          Value: true
         fl_range:
           Alpha: 1
           Show Axes: false
@@ -114,11 +131,6 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        orbbec_astra_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         rl_range:
           Alpha: 1
           Show Axes: false
@@ -151,83 +163,19 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz_default_plugins/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_link:
-          Value: true
-        body_link:
-          Value: true
-        camera_link:
-          Value: true
-        cover_link:
-          Value: true
-        depth:
-          Value: true
-        fl_range:
-          Value: true
-        fl_wheel_link:
-          Value: true
-        fr_range:
-          Value: true
-        fr_wheel_link:
-          Value: true
-        imu_link:
-          Value: true
-        laser:
-          Value: true
-        odom:
-          Value: true
-        orbbec_astra_link:
-          Value: true
-        rl_range:
-          Value: true
-        rl_wheel_link:
-          Value: true
-        rr_range:
-          Value: true
-        rr_wheel_link:
-          Value: true
-        slamtec_rplidar_a2_link:
-          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: false
       Tree:
-        odom:
-          base_link:
-            body_link:
-              camera_link:
-                orbbec_astra_link:
-                  depth:
-                    {}
-              cover_link:
-                slamtec_rplidar_a2_link:
-                  laser:
-                    {}
-              fl_range:
-                {}
-              fl_wheel_link:
-                {}
-              fr_range:
-                {}
-              fr_wheel_link:
-                {}
-              imu_link:
-                {}
-              rl_range:
-                {}
-              rl_wheel_link:
-                {}
-              rr_range:
-                {}
-              rr_wheel_link:
-                {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -262,8 +210,47 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
-    - Class: rviz_default_plugins/Image
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz_default_plugins/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
       Enabled: false
+      Keep: 100
+      Name: Odometry
+      Position Tolerance: 0.10000000149011612
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 255; 25; 0
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
+        Shaft Length: 1
+        Shaft Radius: 0.05000000074505806
+        Value: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /rosbot_base_controller/odom
+      Value: false
+    - Class: rviz_default_plugins/Image
+      Enabled: true
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -274,7 +261,21 @@ Visualization Manager:
         Durability Policy: System Default
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /camera/color/image_raw
+        Value: /camera/color/image_raw/compressed
+      Value: true
+    - Class: rviz_default_plugins/Image
+      Enabled: false
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: DepthImage
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /camera/depth/image_raw/compressedDepth
       Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
@@ -356,7 +357,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 8.610803604125977
+      Distance: 5.8363165855407715
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -371,20 +372,22 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7753979563713074
+      Pitch: 0.5747963786125183
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.8903979063034058
+      Yaw: 3.9553964138031006
     Saved: ~
 Window Geometry:
   AstraCamera:
     collapsed: false
+  DepthImage:
+    collapsed: false
   Displays:
     collapsed: false
-  Height: 846
+  Height: 826
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001be000002b0fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000002b0000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000160041007300740072006100430061006d0065007200610000000219000000d40000002800fffffffb0000000c00430061006d0065007200610100000231000000bc0000000000000000000000010000010f000002b0fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d000002b0000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000005440000003efc0100000002fb0000000800540069006d0065010000000000000544000002fb00fffffffb0000000800540069006d006501000000000000045000000000000000000000026b000002b000000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001be0000029cfc020000000cfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d00000215000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000160041007300740072006100430061006d0065007200610100000258000000810000002800fffffffb0000000c00430061006d0065007200610100000231000000bc0000000000000000fb0000000c00430061006d00650072006100000001a5000000860000000000000000fb00000014004400650070007400680049006d0061006700650000000200000000ed0000002800ffffff000000010000010f0000029cfc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d0000029c000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000045d0000003efc0100000002fb0000000800540069006d006501000000000000045d000002fb00fffffffb0000000800540069006d00650100000000000004500000000000000000000001840000029c00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -393,6 +396,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1348
-  X: 411
-  Y: 30
+  Width: 1117
+  X: 726
+  Y: 75

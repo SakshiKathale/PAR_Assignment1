@@ -38,7 +38,7 @@ fullSetupPath = os.path.abspath(__file__)
 binDir = os.path.dirname(fullSetupPath)
 configDir = os.path.abspath(binDir + "/../config/")
 AIIL_CHECKOUT_DIR = os.path.abspath(binDir + "/../")
-# HUSARION_CHECKOUT_DIR = os.path.abspath(AIIL_CHECKOUT_DIR + "/../" + cfg.husarion_workspace)
+HUSARION_CHECKOUT_DIR = os.path.abspath(AIIL_CHECKOUT_DIR + "/../" + cfg.husarion_workspace)
 
 # Global setup type parameters
 setupRobot      = False
@@ -110,7 +110,7 @@ def setupBash():
     print_subitem("Copying " + templateBashrc + " to " + rbbBashFile)
 
     # Set Husarion workspace based on device type
-    # husDir = HUSARION_CHECKOUT_DIR
+    husDir = HUSARION_CHECKOUT_DIR
     # if setupRobot:
         # husDir = os.path.expanduser("~/" + cfg.husarion_workspace)
     
@@ -124,11 +124,13 @@ def setupBash():
     bashFile.write("\n")
     bashFile.write("# ROSBot Environment Settings\n")
     bashFile.write("export AIIL_CHECKOUT_DIR=" + AIIL_CHECKOUT_DIR + "\n")
-    # bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
+    if setupComp:
+        bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
     bashFile.write("export PATH=\"$AIIL_CHECKOUT_DIR/bin:$PATH\"\n")
-    bashFile.write("\n")
-    bashFile.write("# Source our ROS workspace\n")
-    bashFile.write("source $AIIL_CHECKOUT_DIR/humble_workspace/install/setup.zsh\n")
+    if setupComp:
+        bashFile.write("\n")
+        bashFile.write("# Source our ROS workspace\n")
+        bashFile.write("source $AIIL_CHECKOUT_DIR/humble_workspace/install/setup.zsh\n")
     bashFile.close()
 
     # Query if user wishes to automatically source rosbot
@@ -159,7 +161,8 @@ def setupBash():
     print_warning(".bashrc configuration has changed." +
                   "source the new bashrc file (using below) and re-run the setup\n" + 
                   "source " + rbbBashFile)
-    # print_warning("HUSARION_CHECKOUT_DIR is set to: '" + HUSARION_CHECKOUT_DIR + "'\n. If this is not correct. Then change before relaunch")
+    if setupComp:
+        print_warning("HUSARION_CHECKOUT_DIR is set to: '" + HUSARION_CHECKOUT_DIR + "'\n. If this is not correct. Then change before relaunch")
     exit()
 
 def setupBuildRosbot(configRobots, configComputers):
@@ -397,7 +400,7 @@ def _main_setup():
 
     # Check for environment variables existing
     AIIL_CHECKOUT_DIR = cfg.getEnvParameter("AIIL_CHECKOUT_DIR")
-    # HUSARION_CHECKOUT_DIR = cfg.getEnvParameter("HUSARION_CHECKOUT_DIR")
+    HUSARION_CHECKOUT_DIR = cfg.getEnvParameter("HUSARION_CHECKOUT_DIR")
 
     # Load configs
     config = cfg.loadConfigFile(configDir + "/software.cfg")
@@ -565,7 +568,8 @@ if __name__ == "__main__":
 
     # Loading paths
     print_subitem("AIIL_CHECKOUT_DIR = " + AIIL_CHECKOUT_DIR)
-    # print_subitem("HUSARION_CHECKOUT_DIR = " + HUSARION_CHECKOUT_DIR)
+    if setupComp:
+        print_subitem("HUSARION_CHECKOUT_DIR = " + HUSARION_CHECKOUT_DIR)
     print_subitem("Bin Directory = " + binDir)
     print_subitem("Config Directory = " + configDir)
     print()
