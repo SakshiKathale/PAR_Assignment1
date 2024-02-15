@@ -14,23 +14,26 @@ x-common-config:
   network_mode: host
   ipc: host
   user: ${DOCKER_UID:-1000}:${DOCKER_GID:-1000} # *
-  volumes:
-    - /etc/group:/etc/group:ro                  # *
-    - /etc/passwd:/etc/passwd:ro                # *
-    - /etc/shadow:/etc/shadow:ro                # *
-    - /home/husarion/.ros:/home/husarion/.ros   # *
-    - ${FASTRTPS_DEFAULT_PROFILES_FILE:-dummy_volume_fastdds}:${FASTRTPS_DEFAULT_PROFILES_FILE:-/dummy_volume_fastdds}:ro  # **
-    - ${CYCLONEDDS_PATH:-dummy_volume_cyclonedds}:${CYCLONEDDS_PATH:-/dummy_volume_cyclonedds}:ro                          # **
-  environment:
-    - RMW_IMPLEMENTATION              # ***
-    - FASTRTPS_DEFAULT_PROFILES_FILE  # ***
-    - CYCLONEDDS_URI                  # ***
-    - ROS_DOMAIN_ID                   # ***
+  # volumes:
+  #   - /etc/group:/etc/group:ro                  # *
+  #   - /etc/passwd:/etc/passwd:ro                # *
+  #   - /etc/shadow:/etc/shadow:ro                # *
+  #   - /home/husarion/.ros:/home/husarion/.ros   # *
+  #   - ${FASTRTPS_DEFAULT_PROFILES_FILE:-dummy_volume_fastdds}:${FASTRTPS_DEFAULT_PROFILES_FILE:-/dummy_volume_fastdds}:ro  # **
+  #   - ${CYCLONEDDS_PATH:-dummy_volume_cyclonedds}:${CYCLONEDDS_PATH:-/dummy_volume_cyclonedds}:ro                          # **
+  # environment:
+  #   - RMW_IMPLEMENTATION              # ***
+  #   - FASTRTPS_DEFAULT_PROFILES_FILE  # ***
+  #   - CYCLONEDDS_URI                  # ***
+  #   - ROS_DOMAIN_ID                   # ***
 
 services:
   astra:
     image: husarion/astra:humble
     container_name: astra
+    extends:
+      file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
+      service: astra
     <<: *common-config
     devices:
       - /dev/bus/usb/
@@ -39,6 +42,9 @@ services:
   rplidar:
     image: husarion/rplidar:humble
     container_name: rplidar
+    extends:
+      file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
+      service: rplidar
     <<: *common-config
     devices:
       - /dev/ttyRPLIDAR:/dev/ttyUSB0
@@ -49,6 +55,9 @@ services:
   microros:
     image: husarion/micro-xrce-agent:v2.4.1
     container_name: microros
+    extends:
+      file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
+      service: microros
     <<: *common-config
     devices:
       - ${SERIAL_PORT:?err}
@@ -62,20 +71,42 @@ services:
     # image: husarion/rosbot:humble-0.13.1-20240207
     image: husarion/rosbot:humble-0.11.1-20231229
     container_name: rosbot
+    extends:
+      file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
+      service: rosbot
     <<: *common-config
     command: ros2 launch rosbot_bringup bringup.launch.py
+
+  slam_toolbox:
+    image: husarion/slam-toolbox:humble
+    container_name: slam_toolbox
+    <<: *common-config
+    extends:
+      file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
+      service: slam_toolbox
+    volumes:
+      - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/slam.yaml:/slam_params/slam.yaml
+    command: ros2 launch slam_toolbox online_sync_launch.py slam_params_file:=/slam_params/slam.yaml use_sim_time:=false
+
+  nav2:
+    image: husarion/navigation2:humble
+    container_name: nav2
+    extends:
+      file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
+      service: slam_toolbox
+    <<: *common-config
+    volumes:
+      - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/navigation.yaml:/params.yaml
+    command: ros2 launch nav2_bringup navigation_launch.py
 
   rmit_aiilworkspace:
     image: rmit/aiil_workspace
     container_name: rmit_aiilworkspace
+    extends:
+      file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
+      service: rmit_aiilworkspace
     <<: *common-config
     volumes:
-      - /etc/group:/etc/group:ro                  # *
-      - /etc/passwd:/etc/passwd:ro                # *
-      - /etc/shadow:/etc/shadow:ro                # *
-      - /home/husarion/.ros:/home/husarion/.ros   # *
-      - ${FASTRTPS_DEFAULT_PROFILES_FILE:-dummy_volume_fastdds}:${FASTRTPS_DEFAULT_PROFILES_FILE:-/dummy_volume_fastdds}:ro  # **
-      - ${CYCLONEDDS_PATH:-dummy_volume_cyclonedds}:${CYCLONEDDS_PATH:-/dummy_volume_cyclonedds}:ro                          # **
       - /home/husarion/aiil_workspace/humble_workspace:/ros2_ws
     # command: ros2 launch rosbot_bringup bringup.launch.py
 

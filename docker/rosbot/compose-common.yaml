@@ -1,0 +1,41 @@
+x-volumes-config:
+  &common-volumes
+  volumes:
+    - /etc/group:/etc/group:ro                  # *
+    - /etc/passwd:/etc/passwd:ro                # *
+    - /etc/shadow:/etc/shadow:ro                # *
+    - /home/husarion/.ros:/home/husarion/.ros   # *
+    - ${FASTRTPS_DEFAULT_PROFILES_FILE:-dummy_volume_fastdds}:${FASTRTPS_DEFAULT_PROFILES_FILE:-/dummy_volume_fastdds}:ro  # **
+    - ${CYCLONEDDS_PATH:-dummy_volume_cyclonedds}:${CYCLONEDDS_PATH:-/dummy_volume_cyclonedds}:ro                          # **
+
+x-environment-config:
+  &common-environment
+  environment:
+    - RMW_IMPLEMENTATION              # ***
+    - FASTRTPS_DEFAULT_PROFILES_FILE  # ***
+    - CYCLONEDDS_URI                  # ***
+    - ROS_DOMAIN_ID                   # ***
+
+
+services:
+  astra:
+    <<: [*common-volumes, *common-environment]
+
+  rplidar:
+    <<: [*common-volumes, *common-environment]
+
+  microros:
+    <<: [*common-volumes, *common-environment]
+
+  rosbot:
+    <<: [*common-volumes, *common-environment]
+
+  slam_toolbox:
+    <<: [*common-volumes, *common-environment]
+
+  rmit_aiilworkspace:
+    <<: [*common-volumes, *common-environment]
+
+volumes:
+  dummy_volume_fastdds:
+  dummy_volume_cyclonedds:
