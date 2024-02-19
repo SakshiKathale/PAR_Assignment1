@@ -1,0 +1,29 @@
+from setuptools import find_packages, setup
+
+package_name = 'aiil_rosbot_demo'
+
+setup(
+    name=package_name,
+    version='0.0.0',
+    packages=find_packages(exclude=['test']),
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='rescue',
+    maintainer_email='timothy.wiley@rmit.edu.au',
+    description='The aiil_rosbot_demo package',
+    license='RMIT IP - Not for distribution',
+    # tests_require=['pytest'],
+    entry_points={
+        'console_scripts': [
+            f"cmd_vel = {package_name}.cmd_vel:main",
+            f"rostutorial_sub = {package_name}.rostutorial_sub:main",
+            f"rostutorial_pub = {package_name}.rostutorial_pub:main",
+            f"transform = {package_name}.transform:main",
+        ],
+    },
+)

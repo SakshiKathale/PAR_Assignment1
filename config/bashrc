@@ -41,6 +41,9 @@ function set_ros_domain() {
     echo "Setting: ROS_DOMAIN_ID=$ROS_DOMAIN_ID"
 }
 
+# Block setup.py waning
+export PYTHONWARNINGS="ignore:setup.py install is deprecated::setuptools.command.install"
+
 ######## ROS1 
 # ROS Parameter Settings
 #unset ROS_IPV6
