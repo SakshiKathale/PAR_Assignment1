@@ -42,7 +42,7 @@ function set_ros_domain() {
 }
 
 # Block setup.py waning
-export PYTHONWARNINGS="ignore:setup.py install is deprecated::setuptools.command.install"
+export PYTHONWARNINGS="ignore:easy_install command is deprecated,ignore:setup.py install is deprecated"
 
 ######## ROS1 
 # ROS Parameter Settings

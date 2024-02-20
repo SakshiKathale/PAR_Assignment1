@@ -15,7 +15,7 @@ class CmdVel(Node):
         self.driveSpeed = 1.0
         
         # Command Velocity Publisher
-        self.topic = "/turtle1/cmd_vel"
+        self.topic = "/cmd_vel"
         self.pub = self.create_publisher(geometry_msgs.msg.Twist, self.topic, 10)
         
         # Setup timer callback

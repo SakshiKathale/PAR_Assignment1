@@ -31,9 +31,11 @@ class Transform(Node):
             dest = 'map'
             # dest = 'camera_link'
             src = 'base_link'
-            
             # dest = 'world'
             # src = 'turtle1'
+            self.get_logger().info(f"From frame: {src}")
+            self.get_logger().info(f"To frame: {dest}")
+            
             
             # Timeout for transform data
             timeout = rclpy.duration.Duration(seconds=0.05)
