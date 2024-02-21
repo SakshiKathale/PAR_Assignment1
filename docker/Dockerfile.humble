@@ -38,7 +38,8 @@ RUN rm -rf *
 # RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
     # colcon build
 
-
-# COPY ./ros_entrypoint.sh /
+# Copy entry point
+COPY ./docker/rosbot/ros_entrypoint.sh /
+RUN ["chmod", "+rwx", "/ros_entrypoint.sh"]
 ENTRYPOINT ["/ros_entrypoint.sh"]
 

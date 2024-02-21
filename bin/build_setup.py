@@ -201,6 +201,14 @@ def setupBuildRosbot(configRobots, configComputers):
     # Execute script
     shell.exec(command, hideOutput=False)
 
+def setupDockerImage(configRobots, configComputers):
+    print_status("Creating Docker Image for AIIL Workspace")
+    
+    dockerDir = cfg.dockerDirectory()
+    command = f"docker build -t rmit/aiil_workspace -f {dockerDir}/Dockerfile.humble ."
+    print_subitem(f"Executing: {command}")
+    shell.exec(command, hideOutput=False)
+
 def setupGit():
     print_status("Checking your Git Configuration")
     gitParams = ["user.name", "user.email", "pull.rebase"]
@@ -269,6 +277,7 @@ def setupRobotLocalFiles():
     print_subitem("Removing local compose/script files")
     rosbotHome = cfg.rosbotHome()
     toRemove = [
+        'docker_aiil.sh',
         'compose.yaml',
         'compose.vnc.yaml',
         'flash_firmware.sh',
@@ -285,8 +294,9 @@ def setupRobotLocalFiles():
     
     print_subitem("Creating symlinks for files")
     slinkBin = [
-        'remote_desktop_start.sh',
-        'remote_desktop_stop.sh',
+        'docker_aiil.sh',
+        # 'remote_desktop_start.sh',
+        # 'remote_desktop_stop.sh',
         'ros_driver_start.sh',
         'ros_driver_stop.sh'
     ]
@@ -526,7 +536,7 @@ def _main_setup():
         print()
 
 def _main_setupDocker():
-    print_status("Setup for Docker environment")
+    print_status("Setup Docker environment")
 
     # Check for environment variables existing, otherwise set manually
     tmpEnv = cfg.getEnvParameter("AIIL_CHECKOUT_DIR", check=True)
@@ -541,11 +551,12 @@ def _main_setupDocker():
     configRobots = cfg.loadConfigFile(configDir + "/robots.cfg")
     configComputers = cfg.loadConfigFile(configDir + "/computers.cfg")
 
-    # Setup SSH COnfig
-    setupSSHConfig(configRobots, configComputers)
-
-    # Setup hosts file
-    #setupHostsAliases(configRobots, configComputers)
+    # Run docker build
+    query = query_yes_no("Execute Docker build")
+    if query:
+        setupDockerImage(configRobots, configComputers)
+    print()
+    
 
 # Main entry point
 if __name__ == "__main__":
@@ -599,8 +610,11 @@ if __name__ == "__main__":
     print()
 
     # Use setup based on robot/comp or docker
-    if setupComp or setupRobot:
+    if setupComp:
         _main_setup()
+    elif setupRobot:
+        _main_setup()
+        _main_setupDocker()
     elif setupDocker:
         _main_setupDocker()
 

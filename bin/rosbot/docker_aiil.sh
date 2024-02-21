@@ -17,7 +17,7 @@ BOLD='\033[1m'
 NC='\033[0m' # No Color
 
 # Stop the Docker containers if they're running
-echo -e "${GREEN}[1/1]\r\nStopping ROS 2 driver ${NC}"
+echo -e "${GREEN}[1/2]\r\nChecking if the required Docker Images are pulled ...${NC}"
 
 # Define the docker-compose file
 COMPOSE_FILE="/home/husarion/compose.yaml"
@@ -29,7 +29,27 @@ COMPOSE_FILE="/home/husarion/compose.yaml"
 export DOCKER_UID=$(id -u husarion)
 export DOCKER_GID=$(id -g husarion)
 
-docker compose -f $COMPOSE_FILE --profile all down
-ros2 daemon stop
+# Service Image
+SERVICE_IMAGES="rmit/aiil_workspace"
 
-echo -e "${GREEN}done.${NC}"
+# Flag to track if any image is not pulled
+IMAGE_NOT_FOUND=0
+
+# Loop over each service image
+for IMAGE in $SERVICE_IMAGES; do
+    # Check if the image is pulled
+    if [ -z "$(docker images -q $IMAGE)" ]; then
+        echo -e "${YELLOW}Image ${BOLD}$IMAGE${NC}${YELLOW} is not pulled.${NC}"
+        IMAGE_NOT_FOUND=1
+    else
+        echo -e "${GREEN}Image ${BOLD}$IMAGE${NC}${GREEN} is pulled.${NC}"
+    fi
+done
+
+if [[ $IMAGE_NOT_FOUND -eq 1 ]]; then
+    echo "Cannot find required image: ${SERVICE_IMAGES}"
+    exit
+fi
+
+# Run bash
+docker compose -f $COMPOSE_FILE run rmit_aiilworkspace bash

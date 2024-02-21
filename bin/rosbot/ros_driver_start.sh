@@ -66,7 +66,7 @@ fi
 mkdir -p ~/.ros
 
 if [[ $1 == "all" ]]; then
-    docker compose -f $COMPOSE_FILE up -d
+    docker compose -f $COMPOSE_FILE --profile all up -d
 else
     docker compose -f $COMPOSE_FILE up -d rosbot microros
 fi
