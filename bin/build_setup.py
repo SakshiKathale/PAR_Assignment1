@@ -141,7 +141,7 @@ def setupBash():
     if setupComp:
         bashFile.write("\n")
         bashFile.write("# Source our ROS workspace\n")
-        bashFile.write("source $AIIL_CHECKOUT_DIR/humble_workspace/install/setup.zsh\n")
+        bashFile.write("source $AIIL_CHECKOUT_DIR/humble_workspace/install/setup.bash\n")
     
     # Done
     bashFile.close()
@@ -188,8 +188,8 @@ def setupBuildRosbot(configRobots, configComputers):
 
     # Check for exiting devel
     humble_workspace = cfg.rosbotHumbleWorkspace()
-    develDir = humble_workspace + "/devel"
-    print_subitem("\t Devel Directory: " + develDir)
+    develDir = humble_workspace + "/install"
+    print_subitem("\t Install Directory: " + develDir)
     command = ""
     if not os.path.exists(develDir):
         # Run initialisation script
