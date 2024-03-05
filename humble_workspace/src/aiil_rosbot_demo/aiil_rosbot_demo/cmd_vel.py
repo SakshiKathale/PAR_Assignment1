@@ -10,9 +10,18 @@ class CmdVel(Node):
     def __init__(self):
         super().__init__('aiil_cmdvel')
         
-        # Params
-        self.rotateSpeed = 0.5
-        self.driveSpeed = 1.0
+        # Define Parameters
+        self.declare_parameters(
+            namespace='',
+            parameters=[
+                ('driveSpeed', 1.0),
+                ('rotateSpeed', 0.5)
+            ]
+        )
+        
+        # Look-up parameters values
+        self.driveSpeed = self.get_parameter('driveSpeed').value
+        self.rotateSpeed = self.get_parameter('rotateSpeed').value
         
         # Command Velocity Publisher
         self.topic = "/cmd_vel"
