@@ -18,6 +18,15 @@ RUN apt update && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install ROS2 Packages
+RUN apt update && \
+    source /opt/ros/$ROS_DISTRO/setup.bash && \
+    apt install -y \
+        ros-$ROS_DISTRO-find-object-2d \
+        ros-$ROS_DISTRO-navigation2 \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
 ########################
 # Setup for workspace
 ARG ROS_DISTRO=humble
@@ -29,14 +38,11 @@ SHELL ["/bin/bash", "-c"]
 # Remove existing files, we want to be creating out own from a volume mount
 WORKDIR /ros2_ws
 RUN rm -rf *
-# COPY ./noetic_workspace/src/rmit_record ./src/rmit_record
 
 # Notes:
 # DO NOT copy rmit_panther_description as this is to REPLACE the existing panther_descripton
 #    package in other docker images
-
-# RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
-    # colcon build
+# DO NOT run colcon build
 
 # Copy entry point
 COPY ./docker/rosbot/ros_entrypoint.sh /
