@@ -45,6 +45,7 @@ setupRobot      = False
 setupRobotName  = None
 setupComp       = False
 setupCompName   = None
+setupTheConst   = False
 setupDocker     = False
 
 def installSoftware(software, ros=False, rosversion='none'):
@@ -440,6 +441,7 @@ def _main_setup():
     config = cfg.loadConfigFile(configDir + "/software.cfg")
     configSoftware = config['Software']
     configROSSoftware = config['Ros']
+    configTCSoftware = config['TheConstruct']
     configRobots = cfg.loadConfigFile(configDir + "/robots.cfg")
     configComputers = cfg.loadConfigFile(configDir + "/computers.cfg")
     print_subitem("Configured Robots:")
@@ -476,6 +478,12 @@ def _main_setup():
                 rosversion=configComputers[setupCompName]["rosversion"]
             installSoftware(configROSSoftware, ros=True, rosversion=rosversion)
         print()
+
+        if setupTheConst:
+            query = query_yes_no("Install Software for TheConstruct (WARNING USE ON THECONSTRUCT ONLY)?")
+            if query:
+                installSoftware(configTCSoftware, ros=True, rosversion=rosversion)
+            print()
 
     # Setup Git
     if setupComp:
@@ -568,6 +576,7 @@ if __name__ == "__main__":
     parser.add_argument('-r', dest="robot", type=str, help='Robot to setup Build for (conflicts with "computer")')
     parser.add_argument('-c', dest="computer", type=str, help='Computer to setup Build for (conflicts with "robot")')
     parser.add_argument('-g', dest="general", action='store_true', help='Configure a General Computer/Device')
+    parser.add_argument('-t', dest="theconstruct", action='store_true', help='Configure TheConstruct (in addition to a general computer)')
     parser.add_argument('-d', dest="docker", action='store_true', help='Configure a Docker environment')
     args = parser.parse_args()
     setupCount = 0
@@ -583,6 +592,8 @@ if __name__ == "__main__":
         setupComp = True
         setupCompName = 'general'
         setupCount += 1
+    if args.theconstruct:
+        setupTheConst = True
     if args.docker:
         setupDocker = True
         setupCount += 1
