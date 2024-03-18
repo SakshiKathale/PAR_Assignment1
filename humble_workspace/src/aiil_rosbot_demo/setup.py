@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             f"cmd_vel = {package_name}.cmd_vel:main",
+            f"goToPose = {package_name}.goToPose:main",
             f"rostutorial_sub = {package_name}.rostutorial_sub:main",
             f"rostutorial_pub = {package_name}.rostutorial_pub:main",
             f"publish_hazard = {package_name}.publish_hazard:main",

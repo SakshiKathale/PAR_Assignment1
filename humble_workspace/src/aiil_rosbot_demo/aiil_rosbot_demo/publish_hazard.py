@@ -76,5 +76,6 @@ def main():
     except KeyboardInterrupt:
         pass
 
+    node.destroy_node()
     rclpy.shutdown()
     exit(0)
