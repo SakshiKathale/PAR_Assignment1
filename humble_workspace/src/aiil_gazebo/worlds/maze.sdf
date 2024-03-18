@@ -143,30 +143,6 @@
           </geometry>
         </collision>
       </link>
-
-
-      <!-- Image textures -->    
-      <link name="floor_texture">
-        <pose>1 2 0.2 1.5 0 -1.5</pose>
-        <visual name="visual">
-          <geometry>
-            <plane>
-              <normal>0 0 1</normal>
-              <size>1 1</size>
-            </plane>
-          </geometry>
-        <material>
-          <diffuse>1 1 1 1</diffuse>
-          <specular>0.4 0.4 0.4 1</specular>
-          <pbr>
-            <metal>
-              <!-- <albedo_map>file:///home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/models/aiil_hazard_corrosive/materials/textures/corrosive.png</albedo_map> -->
-              <albedo_map>file:///home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/models/aiil_hazard_nonflammablegas/materials/textures/nonflammablegas.png</albedo_map>
-            </metal>
-          </pbr>
-        </material>
-        </visual>
-      </link>
     
     </model>
 

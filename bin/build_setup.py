@@ -48,7 +48,7 @@ setupCompName   = None
 setupTheConst   = False
 setupDocker     = False
 
-def installSoftware(software, ros=False, rosversion='none'):
+def installSoftware(software, ros=False, rosversion='none', skipcheck=False):
     # Ensure NPM is available
     if not ros:
         if False:
@@ -77,7 +77,7 @@ def installSoftware(software, ros=False, rosversion='none'):
 
             print_progress("Installing " + pkg, progress)
             installed = aptcheck(pkg)
-            if installed:
+            if not skipcheck and installed:
                 print_progress("Package " + pkg + " installed. Skipping", progress)
             else :
                 print_progress("Marking " + pkg + " for installation", progress)
@@ -476,13 +476,13 @@ def _main_setup():
                 rosversion=configRobots[setupRobotName]["rosversion"]
             else :
                 rosversion=configComputers[setupCompName]["rosversion"]
-            installSoftware(configROSSoftware, ros=True, rosversion=rosversion)
+            installSoftware(configROSSoftware, ros=True, rosversion=rosversion, skipcheck=True)
         print()
 
         if setupTheConst:
             query = query_yes_no("Install Software for TheConstruct (WARNING USE ON THECONSTRUCT ONLY)?")
             if query:
-                installSoftware(configTCSoftware, ros=True, rosversion=rosversion)
+                installSoftware(configTCSoftware, ros=True, rosversion=rosversion, skipcheck=True)
             print()
 
     # Setup Git
