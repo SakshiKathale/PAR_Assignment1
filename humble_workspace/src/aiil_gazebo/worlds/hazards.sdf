@@ -144,15 +144,122 @@
         </collision>
       </link>
 
+    
+      <!-- Internal walls -->
+      <link name="wall_internal_1">
+        <pose>-0.75 3 0.5 0 0 0</pose>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>2.5 0.1 1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>2.5 0.1 1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="wall_internal_2">
+        <pose>0.75 1 0.5 0 0 0</pose>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>2.5 0.1 1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>2.5 0.1 1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="wall_internal_3">
+        <pose>-0.75 -1 0.5 0 0 0</pose>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>2.5 0.1 1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>2.5 0.1 1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="wall_internal_4">
+        <pose>1.25 -3 0.5 0 0 0</pose>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1.5 0.1 1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1.5 0.1 1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="wall_internal_5">
+        <pose>-0.5 -4 0.5 0 0 0</pose>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.1 2 1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.1 2 1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
 
       <!-- Image textures -->    
-      <link name="floor_texture">
-        <pose>1 2 0.2 1.5 0 -1.5</pose>
+      <link name="nonflammablegas">
+        <pose>1.89 4 0.2 1.5707 0 -1.5707</pose>
         <visual name="visual">
           <geometry>
             <plane>
               <normal>0 0 1</normal>
-              <size>1 1</size>
+              <size>0.25 0.25</size>
             </plane>
           </geometry>
         <material>
@@ -160,14 +267,114 @@
           <specular>0.4 0.4 0.4 1</specular>
           <pbr>
             <metal>
-              <!-- <albedo_map>file:///home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/models/aiil_hazard_corrosive/materials/textures/corrosive.png</albedo_map> -->
-              <albedo_map>file:///home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/models/aiil_hazard_nonflammablegas/materials/textures/nonflammablegas.png</albedo_map>
+              <albedo_map>file:///home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/models/nonflammablegas.png</albedo_map>
             </metal>
           </pbr>
         </material>
         </visual>
       </link>
-    
+      <link name="explosives">
+        <pose>1.89 2 0.2 1.5707 0 -1.5707</pose>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>0.25 0.25</size>
+            </plane>
+          </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>file:///home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/models/explosives.png</albedo_map>
+            </metal>
+          </pbr>
+        </material>
+        </visual>
+      </link>
+      <link name="corrosive">
+        <pose>1.89 -2 0.2 1.5707 0 -1.5707</pose>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>0.25 0.25</size>
+            </plane>
+          </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>file:///home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/models/corrosive.png</albedo_map>
+            </metal>
+          </pbr>
+        </material>
+        </visual>
+      </link>
+      <link name="dangerouswhenwet">
+        <pose>1.89 -4 0.2 1.5707 0 -1.5707</pose>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>0.25 0.25</size>
+            </plane>
+          </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>file:///home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/models/dangerouswhenwet.png</albedo_map>
+            </metal>
+          </pbr>
+        </material>
+        </visual>
+      </link>
+      <link name="flammablegas">
+        <pose>-1.25 -4.89 0.2 1.5707 0 3.1416</pose>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>0.25 0.25</size>
+            </plane>
+          </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>file:///home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/models/flammablegas.png</albedo_map>
+            </metal>
+          </pbr>
+        </material>
+        </visual>
+      </link>
+
+      <link name="flammablesolid">
+        <pose>-0.75 4.89 0.2 1.5707 0 0</pose>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>0.25 0.25</size>
+            </plane>
+          </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>file:///home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/models/flammablesolid.png</albedo_map>
+            </metal>
+          </pbr>
+        </material>
+        </visual>
+      </link>
+
     </model>
 
   </world>
