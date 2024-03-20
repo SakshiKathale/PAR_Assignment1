@@ -29,7 +29,7 @@ class GoToPose(Node):
         # Construct the destination pose
         pose = geometry_msgs.msg.Pose()
         pose.position.x = 1.0
-        pose.position.y = -2.0
+        pose.position.y = 1.0
         pose.position.z = 0.0
         pose.orientation.x = 0.0
         pose.orientation.y = 0.0
