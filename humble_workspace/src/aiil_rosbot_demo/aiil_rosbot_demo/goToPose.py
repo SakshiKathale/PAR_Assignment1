@@ -5,9 +5,6 @@ import rclpy
 from rclpy.node import Node
 
 import geometry_msgs.msg
-import tf2_geometry_msgs
-import tf2_ros
-
 
 class GoToPose(Node):
     def __init__(self):
@@ -17,7 +14,7 @@ class GoToPose(Node):
         self.map_frame = "map"
         
         # Goal position publisher
-        self.topic = "/goalpose"
+        self.topic = "/goal_pose"
         self.pub = self.create_publisher(geometry_msgs.msg.PoseStamped, self.topic, 10)
         
         # Setup timer callback
@@ -31,8 +28,8 @@ class GoToPose(Node):
         
         # Construct the destination pose
         pose = geometry_msgs.msg.Pose()
-        pose.position.x = 2.0
-        pose.position.y = 2.0
+        pose.position.x = 0.0
+        pose.position.y = 0.0
         pose.position.z = 0.0
         pose.orientation.w = 1.0
         self.get_logger().info(f" - Destination Pose: {pose}")
