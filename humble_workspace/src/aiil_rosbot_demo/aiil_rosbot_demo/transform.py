@@ -29,10 +29,7 @@ class Transform(Node):
         try:
             # Configure frames
             dest = 'map'
-            # dest = 'camera_link'
             src = 'base_link'
-            # dest = 'world'
-            # src = 'turtle1'
             self.get_logger().info(f"From frame: {src}")
             self.get_logger().info(f"To frame: {dest}")
             
