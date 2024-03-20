@@ -24,6 +24,9 @@ RUN apt update && \
     apt install -y \
         ros-$ROS_DISTRO-find-object-2d \
         ros-$ROS_DISTRO-navigation2 \
+        ros-$ROS_DISTRO-nav2-bringup \
+        ros-$ROS_DISTRO-nav2-common \
+        ros-$ROS_DISTRO-slam-toolbox \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 

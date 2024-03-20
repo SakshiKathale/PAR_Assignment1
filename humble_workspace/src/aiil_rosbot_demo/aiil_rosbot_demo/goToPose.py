@@ -21,16 +21,19 @@ class GoToPose(Node):
         self.timer = self.create_timer(1.0, self.goToPose)
     
     def goToPose(self):
-        time = self.get_clock().now()# - rclpy.duration.Duration(seconds=0.1)
+        time = self.get_clock().now() - rclpy.duration.Duration(seconds=0.5)
         
         self.get_logger().info("--------------------------------")
         self.get_logger().info("Time:" + str(time))
         
         # Construct the destination pose
         pose = geometry_msgs.msg.Pose()
-        pose.position.x = 0.0
-        pose.position.y = 0.0
+        pose.position.x = 1.0
+        pose.position.y = -2.0
         pose.position.z = 0.0
+        pose.orientation.x = 0.0
+        pose.orientation.y = 0.0
+        pose.orientation.z = 0.0
         pose.orientation.w = 1.0
         self.get_logger().info(f" - Destination Pose: {pose}")
         

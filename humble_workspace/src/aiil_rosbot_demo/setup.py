@@ -31,6 +31,7 @@ setup(
             f"publish_hazard = {package_name}.publish_hazard:main",
             f"publish_navpath = {package_name}.publish_navpath:main",
             f"transform = {package_name}.transform:main",
+            f"waypoint = {package_name}.waypoint:main",
         ],
     },
 )
