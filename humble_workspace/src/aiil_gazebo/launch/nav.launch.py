@@ -17,6 +17,7 @@ def generate_launch_description():
 
     params_file = LaunchConfiguration('params_file')
     use_sim_time = LaunchConfiguration('use_sim_time')
+    use_slam = LaunchConfiguration('use_slam')
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
@@ -25,13 +26,18 @@ def generate_launch_description():
     )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
-        'use_sim_time', default_value='true', description='Use simulation (Gazebo) clock if true'
+        'use_sim_time', default_value='True', description='Use simulation (Gazebo) clock if true'
+    )
+
+    declare_use_slam_cmd = DeclareLaunchArgument(
+        'use_slam', default_value='True', description='Use SLAM mapping instead of a fixed map'
     )
 
     nav2_bringup_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([nav2_bringup_launch_file_dir]),
         launch_arguments={
             'params_file': params_file,
+            'slam': use_slam,
             'use_sim_time': use_sim_time,
         }.items(),
     )
@@ -39,6 +45,7 @@ def generate_launch_description():
 
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_use_sim_time_cmd)
+    ld.add_action(declare_use_slam_cmd)
 
     ld.add_action(nav2_bringup_launch)
 
