@@ -27,11 +27,20 @@ behavior_server:
     min_rotational_vel: 0.4
     rotational_acc_lim: 3.2
 
+lifecycle_manager:
+  ros__parameters:
+    autostart: true
+    node_names: ['controller_server', 'planner_server', 'behavior_server', 'bt_navigator', 'waypoint_follower']
+    bond_timeout: 0.0
+    attempt_respawn_reconnection: true
+    bond_respawn_max_duration: 20.0
+
 bt_navigator:
   ros__parameters:
     use_sim_time: False
     global_frame: map
     robot_base_frame: base_link
+    # odom_topic: /odom
     odom_topic: /odometry/filtered
     #default_bt_xml_filename: "navigate_w_replanning_and_recovery.xml"
     #default_bt_xml_filename: "/nav2_params/nav_bt.xml"
@@ -74,6 +83,8 @@ bt_navigator_rclcpp_node:
 controller_server:
   ros__parameters:
     use_sim_time: False
+
+    odom_topic: /odometry/filtered
 
     controller_frequency: 10.0
     min_x_velocity_threshold: 0.03
@@ -162,7 +173,8 @@ local_costmap:
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan_filtered
+          # topic: /scan_filtered
+          topic: /scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -212,7 +224,8 @@ global_costmap:
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan_filtered
+          # topic: /scan_filtered
+          topic: /scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True

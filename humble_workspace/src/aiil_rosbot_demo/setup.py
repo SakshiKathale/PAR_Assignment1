@@ -26,9 +26,9 @@ setup(
         'console_scripts': [
             f"cmd_vel = {package_name}.cmd_vel:main",
             f"goToPose = {package_name}.goToPose:main",
-            f"goToPose2 = {package_name}.goToPose2:main",
             f"rostutorial_sub = {package_name}.rostutorial_sub:main",
             f"rostutorial_pub = {package_name}.rostutorial_pub:main",
+            f"pid = {package_name}.pid:main",
             f"publish_hazard = {package_name}.publish_hazard:main",
             f"publish_navpath = {package_name}.publish_navpath:main",
             f"transform = {package_name}.transform:main",

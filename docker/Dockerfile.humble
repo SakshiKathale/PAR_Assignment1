@@ -8,6 +8,13 @@ FROM husarion/rosbot:humble-0.6.1-20230712 as aiil_rosbase
 # Use bash instead of sh
 SHELL ["/bin/bash", "-c"]
 
+# Update install to latest packages
+RUN apt update && \
+    source /opt/ros/$ROS_DISTRO/setup.bash && \
+    apt upgrade -y && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Update Ubuntu Software repository and initialise ROS workspace
 RUN apt update && \
     source /opt/ros/$ROS_DISTRO/setup.bash && \
@@ -26,7 +33,7 @@ RUN apt update && \
         ros-$ROS_DISTRO-navigation2 \
         ros-$ROS_DISTRO-nav2-bringup \
         ros-$ROS_DISTRO-nav2-common \
-        ros-$ROS_DISTRO-slam-toolbox \
+        ros-$ROS_DISTRO-slam-toolbox && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 

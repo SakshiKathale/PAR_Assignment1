@@ -100,7 +100,8 @@ services:
       file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
       service: slam_toolbox
     <<: *common-config
-    profiles: ["all"]
+    # profiles: ["all"]
+    # profiles: ["nav"]
     volumes:
       - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/navigation.yaml:/nav2_params/params.yaml
       - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/aiil_simple_navigate.xml:/nav2_params/nav_bt.xml
@@ -119,20 +120,6 @@ services:
     volumes:
       - /home/husarion/aiil_workspace/humble_workspace:/ros2_ws
     # command: ros2 launch rosbot_bringup bringup.launch.py
-
-# profiles:
-#   all:
-#     services:
-#       astra: {}
-#       rplidar: {}
-#       microros: {}
-#       rosbot: {}
-#       slam_toolbox: {}
-#       nav2: {}
-
-#   aiil:
-#     services:
-#       rmit_aiilworkspace: {}
 
 
 volumes:
