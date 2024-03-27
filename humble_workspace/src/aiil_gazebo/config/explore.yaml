@@ -1,10 +1,10 @@
 explore_node:
   ros__parameters:
     robot_base_frame: base_link
-    return_to_init: false
+    return_to_init: true
     costmap_topic: /global_costmap/costmap
     costmap_updates_topic: /global_costmap/costmap_updates
-    visualize: true
+    visualize: false
     planner_frequency: 0.2
     progress_timeout: 15.0
     potential_scale: 5.0
