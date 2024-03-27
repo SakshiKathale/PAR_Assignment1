@@ -44,6 +44,9 @@ function set_ros_domain() {
 # Block setup.py waning
 export PYTHONWARNINGS="ignore:easy_install command is deprecated,ignore:setup.py install is deprecated"
 
+# Configure Cyclone DDS
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
 ######## ROS1 
 # ROS Parameter Settings
 #unset ROS_IPV6
