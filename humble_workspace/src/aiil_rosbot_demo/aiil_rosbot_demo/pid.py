@@ -54,7 +54,7 @@ class PID(Node):
         self.pub = self.create_publisher(geometry_msgs.msg.Twist, self.topic, 10)
         
         # Setup timer callback
-        self.timer = self.create_timer(2.0, self.pidLoop)
+        self.timer = self.create_timer(1.0, self.pidLoop)
     
     # Taken from: https://gist.github.com/salmagro/2e698ad4fbf9dae40244769c5ab74434
     # This method is no longer available in TF2 see: https://github.com/ros/geometry2/issues/222
@@ -83,7 +83,7 @@ class PID(Node):
         # If set-point reached - stop
         if not self.stop:
             try:
-                time = self.get_clock().now() - rclpy.duration.Duration(seconds=1.0)
+                time = self.get_clock().now() - rclpy.duration.Duration(seconds=0.1)
                 self.get_logger().info("--------------------------------")
                 self.get_logger().info("Time:" + str(time))
 
@@ -138,7 +138,7 @@ class PID(Node):
                 # if t_now - t_start > rospy.Duration(max_duration):
                 #     stop = True
             except tf2_ros.TransformException as ex:
-                self.get_logger().info(f'Could not transform {src} to {dest}: {ex}')
+                self.get_logger().info(f'Could not transform {self.frame_robot} to {self.frame_odom}: {ex}')
 
         else:
             self.get_logger().info("--------------------------------")
