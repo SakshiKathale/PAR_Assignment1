@@ -100,7 +100,7 @@ services:
       file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
       service: slam_toolbox
     <<: *common-config
-    # profiles: ["all"]
+    profiles: ["all"]
     # profiles: ["nav"]
     volumes:
       - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/navigation.yaml:/nav2_params/params.yaml
