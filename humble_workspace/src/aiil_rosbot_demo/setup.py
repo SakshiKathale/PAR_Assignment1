@@ -24,6 +24,7 @@ setup(
     # tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            f"best_effort_repeater = {package_name}.best_effort_repeater:main",
             f"cmd_vel = {package_name}.cmd_vel:main",
             f"goToPose = {package_name}.goToPose:main",
             f"rostutorial_sub = {package_name}.rostutorial_sub:main",

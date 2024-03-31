@@ -4,6 +4,10 @@ from launch.substitutions import LaunchConfiguration, EnvironmentVariable
 from launch_ros.actions import Node
 
 def generate_launch_description():
+
+    # image_topic = '/camera/color/image_raw'
+    image_topic = '/camera/color/image_raw/compressed'
+    image_topic_repeat = image_topic + '/repeat'
    
     return LaunchDescription([
 
@@ -15,8 +19,8 @@ def generate_launch_description():
         DeclareLaunchArgument('gui', default_value='true', description='Launch GUI.'),
         
         # Our default camera topic. If streaming images, consider using the compressed image instead
-        DeclareLaunchArgument('image_topic', default_value='/camera/color/image_raw', description='Image topic to subscribe to.'),
-        #DeclareLaunchArgument('image_topic', default_value='/camera/color/image_raw/compressed', description='Image topic to subscribe to.'),
+        DeclareLaunchArgument('image_topic', default_value=image_topic, description='Image topic from the camera (best_effort).'),
+        DeclareLaunchArgument('image_topic_repeat', default_value=image_topic_repeat, description='Image to repeat to for find object (reliable).'),
         
         # Path where you have saved the existing trained images
         # Uses the path to the AIIL Workspace, but this could be set to anywhere
@@ -29,6 +33,7 @@ def generate_launch_description():
         DeclareLaunchArgument('settings_path', default_value='~/.ros/find_object_2d.ini', description='Config file.'),      
 
         # Nodes to launch
+        # Find Object 2D node
         Node(
             package='find_object_2d',
             executable='find_object_2d',
@@ -39,6 +44,18 @@ def generate_launch_description():
               'settings_path': LaunchConfiguration('settings_path')
             }],
             remappings=[
-                ('image', LaunchConfiguration('image_topic'))
-            ]), 
+                ('image', LaunchConfiguration('image_topic_repeat'))
+        ]),
+        
+        # Best Effort repeater since find_object ONLY uses reliable QoS
+        Node(
+            package='aiil_rosbot_demo',
+            executable='best_effort_repeater',
+            name='best_effort_repeater',
+            output='screen',
+            parameters=[
+                {'sub_topic_name': LaunchConfiguration('image_topic')},
+                {'repeat_topic_name': LaunchConfiguration('image_topic_repeat')},
+            ]
+        ),
     ])
