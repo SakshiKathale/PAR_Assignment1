@@ -40,6 +40,7 @@ humble_workspace/build
 humble_workspace/install
 humble_workspace/log
 humble_workspace/logs
+humble_workspace/objects
 
 # ROS projects
 humble_workspace/src/examples
