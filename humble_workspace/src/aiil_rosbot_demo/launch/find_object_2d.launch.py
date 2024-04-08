@@ -8,6 +8,9 @@ def generate_launch_description():
     # image_topic = '/camera/color/image_raw'
     image_topic = '/camera/color/image_raw/compressed'
     image_topic_repeat = image_topic + '/repeat'
+    # use_compressed = 'false'
+    use_compressed = 'true'
+    
    
     return LaunchDescription([
 
@@ -21,6 +24,7 @@ def generate_launch_description():
         # Our default camera topic. If streaming images, consider using the compressed image instead
         DeclareLaunchArgument('image_topic', default_value=image_topic, description='Image topic from the camera (best_effort).'),
         DeclareLaunchArgument('image_topic_repeat', default_value=image_topic_repeat, description='Image to repeat to for find object (reliable).'),
+        DeclareLaunchArgument('use_compressed', default_value=use_compressed, description='Determine if compressed image is to be used'),
         
         # Path where you have saved the existing trained images
         # Uses the path to the AIIL Workspace, but this could be set to anywhere
@@ -56,6 +60,7 @@ def generate_launch_description():
             parameters=[
                 {'sub_topic_name': LaunchConfiguration('image_topic')},
                 {'repeat_topic_name': LaunchConfiguration('image_topic_repeat')},
+                {'use_compressed': LaunchConfiguration('use_compressed')},
             ]
         ),
     ])
