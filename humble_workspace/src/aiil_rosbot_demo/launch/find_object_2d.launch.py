@@ -10,6 +10,12 @@ def generate_launch_description():
     image_topic_repeat = image_topic + '/repeat'
     # use_compressed = 'false'
     use_compressed = 'true'
+
+    camera_info_topic = '/camera/depth/camera_info'
+    camera_info_topic_repeat = '/camera/depth/camera_info/repeat'
+
+    depth_topic = '/camera/depth/image_raw'
+    depth_topic_repeat = depth_topic + '/repeat'
     
    
     return LaunchDescription([
@@ -36,6 +42,12 @@ def generate_launch_description():
         # Find Object 2D Setting. By default just use the standard settings, but you can copy and tweak this file if you wish
         DeclareLaunchArgument('settings_path', default_value='~/.ros/find_object_2d.ini', description='Config file.'),      
 
+        DeclareLaunchArgument('depth_topic', default_value=depth_topic, description='Depth of the object'),
+        DeclareLaunchArgument('depth_topic_repeat', default_value=depth_topic_repeat, description='Depth of the object'),
+
+        DeclareLaunchArgument('camera_info_topic', default_value=camera_info_topic, description='Depth of the object'),
+        DeclareLaunchArgument('camera_info_topic_repeat', default_value=camera_info_topic_repeat, description='Depth of the object'),
+
         # Nodes to launch
         # Find Object 2D node
         Node(
@@ -43,12 +55,15 @@ def generate_launch_description():
             executable='find_object_2d',
             output='screen',
             parameters=[{
+              'subscribe_depth': False, # True,
               'gui': LaunchConfiguration('gui'),
               'objects_path': LaunchConfiguration('objects_path'),
               'settings_path': LaunchConfiguration('settings_path')
             }],
             remappings=[
-                ('image', LaunchConfiguration('image_topic_repeat'))
+                ('image', LaunchConfiguration('image_topic_repeat')),
+                # ('depth_registered/image_raw', LaunchConfiguration('depth_topic_repeat')),
+                # ('depth_registered/camera_info', LaunchConfiguration('camera_info_topic_repeat')),
         ]),
         
         # Best Effort repeater since find_object ONLY uses reliable QoS
@@ -63,4 +78,28 @@ def generate_launch_description():
                 {'use_compressed': LaunchConfiguration('use_compressed')},
             ]
         ),
+
+        #  Node(
+        #     package='aiil_rosbot_demo',
+        #     executable='depth_best_effort_repeater',
+        #     name='depth_best_effort_repeater',
+        #     output='screen',
+        #     parameters=[
+        #         {'sub_topic_name': LaunchConfiguration('depth_topic')},
+        #         {'repeat_topic_name': LaunchConfiguration('depth_topic_repeat')},
+        #         {'use_compressed': LaunchConfiguration('use_compressed')},
+        #     ]
+        # ),
+
+        # Node(
+        #     package='aiil_rosbot_demo',
+        #     executable='camera_info_best_effort_repeater',
+        #     name='camera_info_best_effort_repeater',
+        #     output='screen',
+        #     parameters=[
+        #         {'sub_topic_name': LaunchConfiguration('camera_info_topic')},
+        #         {'repeat_topic_name': LaunchConfiguration('camera_info_topic_repeat')},
+        #         {'use_compressed': LaunchConfiguration('use_compressed')},
+        #     ]
+        # ),
     ])

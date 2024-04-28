@@ -12,7 +12,7 @@ def generate_launch_description():
     aiil_rosbot_demo_dir = get_package_share_directory('aiil_rosbot_demo')
     nav2_bringup_launch_file_dir = os.path.join(
         # get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py'
-        get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py'
+        get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py'
     )
 
     params_file = LaunchConfiguration('params_file')

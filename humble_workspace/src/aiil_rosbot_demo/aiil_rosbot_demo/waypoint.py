@@ -2,7 +2,7 @@
 
 ## This example is based on TheConstruct Nav2 Tutorial
 
-from nav2_msgs.action import NavigateToPose
+from nav2_msgs.action import NavigateToPose, Spin
 from action_msgs.msg import GoalStatus
 
 import rclpy
@@ -23,7 +23,6 @@ class NavToPoseActionClient(Node):
 
     def send_goal(self):
         self.get_logger().info('Sending Goal')
-        
         goal_pose = NavigateToPose.Goal()
         goal_pose.pose.header.frame_id = 'map'
         goal_pose.pose.pose.position.x = 2.0

@@ -25,6 +25,9 @@ setup(
     entry_points={
         'console_scripts': [
             f"best_effort_repeater = {package_name}.best_effort_repeater:main",
+            f"camera_info_best_effort_repeater = {package_name}.camera_info_best_effort_repeater:main",
+            f"depth_best_effort_repeater = {package_name}.depth_best_effort_repeater:main",
+
             f"cmd_vel = {package_name}.cmd_vel:main",
             f"goToPose = {package_name}.goToPose:main",
             f"rostutorial_sub = {package_name}.rostutorial_sub:main",
