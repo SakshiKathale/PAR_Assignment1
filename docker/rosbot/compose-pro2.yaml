@@ -14,18 +14,7 @@ x-common-config:
   network_mode: host
   ipc: host
   user: ${DOCKER_UID:-1000}:${DOCKER_GID:-1000} # *
-  # volumes:
-  #   - /etc/group:/etc/group:ro                  # *
-  #   - /etc/passwd:/etc/passwd:ro                # *
-  #   - /etc/shadow:/etc/shadow:ro                # *
-  #   - /home/husarion/.ros:/home/husarion/.ros   # *
-  #   - ${FASTRTPS_DEFAULT_PROFILES_FILE:-dummy_volume_fastdds}:${FASTRTPS_DEFAULT_PROFILES_FILE:-/dummy_volume_fastdds}:ro  # **
-  #   - ${CYCLONEDDS_PATH:-dummy_volume_cyclonedds}:${CYCLONEDDS_PATH:-/dummy_volume_cyclonedds}:ro                          # **
-  # environment:
-  #   - RMW_IMPLEMENTATION              # ***
-  #   - FASTRTPS_DEFAULT_PROFILES_FILE  # ***
-  #   - CYCLONEDDS_URI                  # ***
-  #   - ROS_DOMAIN_ID                   # ***
+
 
 services:
   astra:
@@ -106,7 +95,6 @@ services:
       - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/navigation.yaml:/nav2_params/params.yaml
       - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/aiil_simple_navigate.xml:/nav2_params/nav_bt.xml
     command: ros2 launch nav2_bringup navigation_launch.py params_file:=/nav2_params/params.yaml use_sim_time:=false
-    #command: ros2 launch nav2_bringup navigation_launch.py
 
   # RMIT workspace is not launched, just make a bash container
   rmit_aiilworkspace:
@@ -125,3 +113,4 @@ services:
 volumes:
   dummy_volume_fastdds:
   dummy_volume_cyclonedds:
+

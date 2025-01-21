@@ -268,12 +268,14 @@ def setupNetworks(configRobots):
     command = f"sudo netplan -d apply"
     shell.exec(command, hideOutput=False)
     
-def setupRobotLocalFiles():
+def setupRobotLocalFiles(configRobots):
     print_status("Configuring local robot files")
     
-    print_subitem("Run Husarion robot setup script")
-    command = "sudo /usr/local/sbin/setup_robot_configuration rosbot_2_pro ros2_humble"
-    shell.exec(command, hideOutput=False)
+    husarionVersion = configRobots[setupRobotName]["husarion"]
+    if husarionVersion == "pro2":
+        print_subitem("Run Husarion robot setup script")
+        command = "sudo /usr/local/sbin/setup_robot_configuration rosbot_2_pro ros2_humble"
+        shell.exec(command, hideOutput=False)
     
     print_subitem("Removing local compose/script files")
     rosbotHome = cfg.rosbotHome()
@@ -307,14 +309,28 @@ def setupRobotLocalFiles():
     ]
     binDir = cfg.binDirectory()
     for file in slinkBin:
-        command = f"ln -s {binDir}/rosbot/{file} {rosbotHome}/."
+        command = f"ln -s {binDir}/rosbot/{husarionVersion}/{file} {rosbotHome}/."
         print_subitem(f"\t {command}")
         shell.exec(command, hideOutput=False)
+    
+    # Link main compose to version specific compose
     dockerDir = cfg.dockerDirectory()
+    composeFile = f"compose-{husarionVersion}.yaml"
+    command = f"ln -s {dockerDir}/rosbot/{composeFile} {rosbotHome}/compose.yaml"
+    print_subitem(f"\t {command}")
+    shell.exec(command, hideOutput=False)
+    
+    # Copy any additional compose files
+    slinkDocker = [
+        'compose-common.yaml',
+        # 'compose.vnc.yaml'
+    ]
     for file in slinkDocker:
         command = f"ln -s {dockerDir}/rosbot/{file} {rosbotHome}/."
         print_subitem(f"\t {command}")
         shell.exec(command, hideOutput=False)
+    
+    
 
 def setupSSHConfig(configRobots, configComputers):
     print_status("Setting up SSH Config")
@@ -439,7 +455,11 @@ def _main_setup():
 
     # Load configs
     config = cfg.loadConfigFile(configDir + "/software.cfg")
-    configSoftware = config['Software']
+    configSoftware = None
+    if setupComp:
+        configSoftware = config['Software']
+    elif setupRobot:
+        configSoftware = config['SoftwareRosbot']
     configROSSoftware = config['Ros']
     configTCSoftware = config['TheConstruct']
     configRobots = cfg.loadConfigFile(configDir + "/robots.cfg")
@@ -523,13 +543,12 @@ def _main_setup():
     if setupRobot:
         query = query_yes_no("(Robot only) Configure local files?")
         if query:
-            setupRobotLocalFiles()
+            setupRobotLocalFiles(configRobots)
+        print()
+        
+        query = query_yes_no("(Robot only) Configure Netplan Networks?")
+        if query:
             setupNetworks(configRobots)
-        else:
-            print()
-            query = query_yes_no("(Robot only) Configure Netplan Networks?")
-            if query:
-                setupNetworks(configRobots)
         print()
 
     # Configure Husarion Git Repositories
