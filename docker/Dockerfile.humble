@@ -3,7 +3,8 @@
 # Base for ROS install - helps with development
 
 ARG ROS_DISTRO=humble
-FROM husarion/rosbot:humble-0.6.1-20230712 as aiil_rosbase
+FROM husarion/rosbot:humble--20250117 AS aiil_rosbase
+# FROM husarion/rosbot:humble-0.6.1-20230712 as aiil_rosbase
 
 # Use bash instead of sh
 SHELL ["/bin/bash", "-c"]
@@ -50,9 +51,10 @@ WORKDIR /ros2_ws
 RUN rm -rf *
 
 # Notes:
-# DO NOT copy rmit_panther_description as this is to REPLACE the existing panther_descripton
-#    package in other docker images
+# DO NOT copy packages
 # DO NOT run colcon build
+#   We mount the aiil_workspace folder so files and build are picked up without
+#   having to rebuild the container every time
 
 # Copy entry point
 COPY ./docker/rosbot/ros_entrypoint.sh /

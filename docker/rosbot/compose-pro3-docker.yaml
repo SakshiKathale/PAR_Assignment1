@@ -1,19 +1,13 @@
-# Comments:
-#   * This is a temporary solution allowing shared memory communication between host and docker container when
-#     using Fast DDS. To be removed when user will be able to change this permission to something else than 0644 
-#     (https://github.com/eProsima/Fast-DDS/blob/master/thirdparty/boost/include/boost/interprocess/permissions.hpp#L100) 
-#
-#  ** If the FASTRTPS_DEFAULT_PROFILES_FILE or CYCLONEDDS_URI envs are defined, then we need to bind mount the volume
-#     with the DDS config to the container  
-#
-# *** Optional envs the ROS user may want to set - we need to pass them to the container
+
+# Note, this file depends on the common compose:
+#     docker/rosbot/compose-common.yaml
 
 x-common-config:
   &common-config
   restart: unless-stopped
   network_mode: host
   ipc: host
-  user: ${DOCKER_UID:-1000}:${DOCKER_GID:-1000} # *
+  # user: ${DOCKER_UID:-1000}:${DOCKER_GID:-1000} # *
 
 
 services:
@@ -52,11 +46,14 @@ services:
     <<: *common-config
     profiles: ["all"]
     devices:
-      - ${SERIAL_PORT:?err}
-    environment: #only two envs are valid for micro-xrce-agent
+      # - ${SERIAL_PORT:?err}
+      - /dev/ttyAMA0
+    environment:
+      - SERIAL_PORT=/dev/ttyAMA0
       - FASTRTPS_DEFAULT_PROFILES_FILE            # ***
       - XRCE_DOMAIN_ID_OVERRIDE=${ROS_DOMAIN_ID:-}  # ***
-    command: MicroXRCEAgent serial -D $SERIAL_PORT serial -b 576000 # -v6
+    command: MicroXRCEAgent serial -D /dev/ttyAMA0 serial -b 576000
+  # command: MicroXRCEAgent serial -D $SERIAL_PORT serial -b 576000 # <- this fails as it uses the 'native' serial_port env var not the container one
 
   rosbot:
     # image: husarion/rosbot:humble-0.13.1-20240207
@@ -68,7 +65,11 @@ services:
       service: rosbot
     <<: *common-config
     profiles: ["all"]
-    command: ros2 launch rosbot_bringup bringup.launch.py
+    environment:
+      - SERIAL_PORT=/dev/ttyAMA0
+    command: >
+      ros2 launch rosbot_bringup bringup.launch.py
+        microros:=False
 
   # slam_toolbox:
   #   image: husarion/slam-toolbox:humble
@@ -97,18 +98,38 @@ services:
   #   command: ros2 launch nav2_bringup navigation_launch.py params_file:=/nav2_params/params.yaml use_sim_time:=false
 
   # RMIT workspace is not launched, just make a bash container
-  # rmit_aiilworkspace:
-  #   image: rmit/aiil_workspace
-  #   container_name: rmit_aiilworkspace
-  #   extends:
-  #     file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
-  #     service: rmit_aiilworkspace
-  #   <<: *common-config
-  #   profiles: ["aiil"]
-  #   volumes:
-  #     - /home/husarion/aiil_workspace/humble_workspace:/ros2_ws
-  #   # command: ros2 launch rosbot_bringup bringup.launch.py
+  rmit_aiilworkspace:
+    image: rmit/aiil_workspace
+    container_name: rmit_aiilworkspace
+    extends:
+      file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
+      service: rmit_aiilworkspace
+    <<: *common-config
+    profiles: ["aiil"]
+    volumes:
+      - /home/husarion/aiil_workspace/humble_workspace:/ros2_ws
+    # command: ros2 launch rosbot_bringup bringup.launch.py
 
+  # This container is specifically for initial setup of the ROSBot3 to flash firmware
+  firmware_flash:
+    image: husarion/rosbot:humble--20250117
+    container_name: firmware_flash
+    extends:
+      file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
+      service: rosbot
+    <<: *common-config
+    devices:
+      # - ${SERIAL_PORT:?err}
+      - /dev/ttyAMA0
+      - /dev/gpiochip0
+      - /dev/gpiochip1
+      - /dev/gpiochip2
+      - /dev/gpiochip3
+      - /dev/gpiochip4
+      - /dev/gpiochip5
+    environment:
+      - SERIAL_PORT=/dev/ttyAMA0
+    profiles: ["firmware"]
 
 volumes:
   dummy_volume_fastdds:

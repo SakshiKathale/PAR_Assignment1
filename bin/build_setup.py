@@ -282,6 +282,7 @@ def setupRobotLocalFiles(configRobots):
     toRemove = [
         'docker_aiil.sh',
         'compose.yaml',
+        'compose-common.yaml',
         'compose.vnc.yaml',
         'flash_firmware.sh',
         'remote_desktop_start.sh',
@@ -298,6 +299,7 @@ def setupRobotLocalFiles(configRobots):
     print_subitem("Creating symlinks for files")
     slinkBin = [
         'docker_aiil.sh',
+        'flash_firmware.sh',
         # 'remote_desktop_start.sh',
         # 'remote_desktop_stop.sh',
         'ros_driver_start.sh',
