@@ -95,6 +95,37 @@ def installSoftware(software, ros=False, rosversion='none', skipcheck=False):
     else :
         print_subitem("No packages to install")
 
+def installSnapPro3Docker(configRobots):
+    print_status("Configuring Snap for Pro3 (Docker w/ ROS2 Humble)")
+    
+    query = query_yes_no("(Robot Pro3-Docker Only) Install Snap package(s)")
+    if query:
+        # Remove existing snap (which causes conflict)
+        command = f"sudo snap remove husarion.rosbot"
+        print_subitem(f"Executing: {command}")
+        shell.exec(command, hideOutput=False)
+        
+        # Install Snap packages
+        command = f"sudo snap install husarion.webui --channel=stable/humble"
+        print_subitem(f"Executing: {command}")
+        shell.exec(command, hideOutput=False)
+    print()
+    
+    # Configure Snap packages
+    query = query_yes_no("(Robot Pro3-Docker Only) Configure Snap package properties")
+    if query:
+        ip = configRobots[setupRobotName]["ip"]
+        properties = [
+            f"ros.domain={ip}",
+            f"ros.transport=rmw_cyclonedds_cpp",
+        ]
+        
+        for property in properties:
+            command = f"sudo snap set husarion.webui {property}",
+            print_subitem(f"Executing: {command}")
+            shell.exec(command, hideOutput=False)
+    print()   
+
 def replaceAuthKeys():
     localAuthFile = ssh.authKeyFile()
     target = ssh.sshDirectory
@@ -331,8 +362,6 @@ def setupRobotLocalFiles(configRobots):
         command = f"ln -s {dockerDir}/rosbot/{file} {rosbotHome}/."
         print_subitem(f"\t {command}")
         shell.exec(command, hideOutput=False)
-    
-    
 
 def setupSSHConfig(configRobots, configComputers):
     print_status("Setting up SSH Config")
@@ -477,10 +506,13 @@ def _main_setup():
         if not configRobots.has_section(setupRobotName):
             print_error("No Configuration parameters for robot: " + setupRobotName)
             exit()
+        print_status(f"Configuring for robot: {setupRobotName}")
     if setupComp:
         if not configComputers.has_section(setupCompName):
             print_error("No Configuration parameters for robot: " + setupCompName)
             exit()
+        print_status(f"Configuring for computer: {setupCompName}")
+    print()
 
     # Install software
     query = query_yes_no("Install General Software?")
@@ -488,6 +520,7 @@ def _main_setup():
         installSoftware(configSoftware)
     print()
 
+    # Ros specific packages - computer only
     if setupComp:
         query = query_yes_no("(Comp Only) Install ROS Specific Additional Packages?")
         if query:
@@ -505,6 +538,15 @@ def _main_setup():
             query = query_yes_no("Install Software for TheConstruct (WARNING USE ON THECONSTRUCT ONLY)?")
             if query:
                 installSoftware(configTCSoftware, ros=True, rosversion=rosversion, skipcheck=True)
+            print()
+
+    # Snap packages (pro3 only)
+    if setupRobot:
+        husarionVersion = configRobots[setupRobotName]['husarion']
+        if husarionVersion == 'pro3-docker':
+            query = query_yes_no("(Robot Pro3-Docker Only) Install and/or Configure Pro3 Snap packages for ROS2 Humble")
+            if query:
+                installSnapPro3Docker(configRobots)
             print()
 
     # Setup Git
