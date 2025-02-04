@@ -3,8 +3,7 @@
 # Base for ROS install - helps with development
 
 ARG ROS_DISTRO=humble
-FROM husarion/rosbot:humble--20250117 AS aiil_rosbase
-# FROM husarion/rosbot:humble-0.6.1-20230712 as aiil_rosbase
+FROM husarion/rosbot:humble-0.14.0-20250131 AS aiil_rosbase
 
 # Use bash instead of sh
 SHELL ["/bin/bash", "-c"]

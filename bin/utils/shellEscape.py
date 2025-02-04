@@ -10,6 +10,9 @@ from utils.echo import (
 )
 import subprocess
 
+'''
+Capture the output of an exec command
+'''
 def capture(command, emptyFail=False):
     retVal = None
     
@@ -24,6 +27,17 @@ def capture(command, emptyFail=False):
             retVal = ""
     
     return retVal
+
+'''
+Check the status of a command using subprocess check
+'''
+def check_output(command):
+    try:
+        stderr = subprocess.DEVNULL
+        subprocess.check_output(command, stderr=stderr, shell=True)
+        return True
+    except subprocess.CalledProcessError:
+        return False
 
 ''' 
 Execute the command

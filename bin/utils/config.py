@@ -87,6 +87,12 @@ def getEnvParameter(param, check=False):
     return value
 
 '''
+Foxglove layout files directory
+'''
+def foxgloveLayoutDir():
+    return "/var/snap/husarion-webui/common"
+
+'''
 Get the keys from the config block excluding the default block
 '''
 def getKeys(config):

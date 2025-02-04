@@ -31,6 +31,7 @@ from utils.grep import (
     grep
 )
 import utils.shellEscape as shell
+import utils.snapinstall as snap
 import utils.sshscp as ssh
 
 # Global Parameters
@@ -95,35 +96,37 @@ def installSoftware(software, ros=False, rosversion='none', skipcheck=False):
     else :
         print_subitem("No packages to install")
 
-def installSnapPro3Docker(configRobots):
-    print_status("Configuring Snap for Pro3 (Docker w/ ROS2 Humble)")
+def installSnap(configRobots, configSnap):
+    print_status("Configuring Snap")
     
-    query = query_yes_no("(Robot Pro3-Docker Only) Install Snap package(s)")
+    query = query_yes_no("Install Snap package(s)")
     if query:
         # Remove existing snap (which causes conflict)
-        command = f"sudo snap remove husarion.rosbot"
-        print_subitem(f"Executing: {command}")
-        shell.exec(command, hideOutput=False)
+        toRemove = [
+            'husarion.rosbot'
+        ]
+        for pkg in toRemove:
+            snap.remove_snap_package(pkg)
         
         # Install Snap packages
-        command = f"sudo snap install husarion.webui --channel=stable/humble"
-        print_subitem(f"Executing: {command}")
-        shell.exec(command, hideOutput=False)
+        for pkg in configSnap:
+            # Either the channel to install, true or false
+            pkgValue = configSnap[pkg]
+            if pkgValue != 'False':
+                channel = None
+                if pkgValue != 'True':
+                    channel = pkgValue
+                snap.install_snap_packages(pkg, channel=channel)
+            else :
+                print_subitem("Skipping package - configuration file disables install of " + pkg)
     print()
     
     # Configure Snap packages
-    query = query_yes_no("(Robot Pro3-Docker Only) Configure Snap package properties")
+    query = query_yes_no("Configure Snap package properties")
     if query:
         ip = configRobots[setupRobotName]["ip"]
-        properties = [
-            f"ros.domain={ip}",
-            f"ros.transport=rmw_cyclonedds_cpp",
-        ]
-        
-        for property in properties:
-            command = f"sudo snap set husarion.webui {property}",
-            print_subitem(f"Executing: {command}")
-            shell.exec(command, hideOutput=False)
+        snap.configure_snap_property("husarion-webui", "ros.domain-id", ip)
+        snap.configure_snap_property("husarion-webui", "ros.transport", "rmw_cyclonedds_cpp")
     print()   
 
 def replaceAuthKeys():
@@ -490,7 +493,7 @@ def _main_setup():
     if setupComp:
         configSoftware = config['Software']
     elif setupRobot:
-        configSoftware = config['SoftwareRosbot']
+        configSoftware = config['Software.rosbot']
     configROSSoftware = config['Ros']
     configTCSoftware = config['TheConstruct']
     configRobots = cfg.loadConfigFile(configDir + "/robots.cfg")
@@ -544,9 +547,10 @@ def _main_setup():
     if setupRobot:
         husarionVersion = configRobots[setupRobotName]['husarion']
         if husarionVersion == 'pro3-docker':
+            configSnap = config['Snap.' + husarionVersion]
             query = query_yes_no("(Robot Pro3-Docker Only) Install and/or Configure Pro3 Snap packages for ROS2 Humble")
             if query:
-                installSnapPro3Docker(configRobots)
+                installSnap(configRobots, configSnap)
             print()
 
     # Setup Git
