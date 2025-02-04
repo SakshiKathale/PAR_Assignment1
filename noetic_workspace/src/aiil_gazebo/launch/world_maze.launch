@@ -1,9 +1,0 @@
-<launch>
-   
-   <!-- Launch with Maze world from husarion rosbot package -->
-   <include file="$(find aiil_gazebo)/launch/base_world.launch">
-      <arg name="world_file" value="$(find rosbot_gazebo)/worlds/maze.world"/>
-   </include>
-
-</launch>
-
