@@ -83,3 +83,5 @@ export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 #     echo "Setting: ROS_HOSTNAME=$ROS_HOSTNAME"
 # }
 
+# Ensure root ROS is sourced
+source /opt/ros/humble/setup.bash
