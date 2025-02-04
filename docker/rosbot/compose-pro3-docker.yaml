@@ -47,6 +47,11 @@ services:
       service: rosbot
     <<: *common-config
     profiles: ["all"]
+    volumes:
+      - /home/husarion/aiil_workspace/husarion_workspace/pro3/rosbot_description/meshes:/ros2_ws/install/rosbot_description/share/rosbot_description/meshes
+      - /home/husarion/aiil_workspace/husarion_workspace/pro3/rosbot_description/urdf:/ros2_ws/install/rosbot_description/share/rosbot_description/urdf
+      - /home/husarion/aiil_workspace/husarion_workspace/pro3/ros_components_description/meshes:/ros2_ws/install/ros_components_description/share/ros_components_description/meshes
+      - /home/husarion/aiil_workspace/husarion_workspace/pro3/ros_components_description/urdf:/ros2_ws/install/ros_components_description/share/ros_components_description/urdf
     devices:
       - /dev/ttyAMA0
       - /dev/gpiochip0
@@ -88,14 +93,17 @@ services:
     privileged: true
     volumes:
       - /dev/bus/usb:/dev/bus/usb
-      - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/oakd.yaml:/oakd.yaml
+      - /home/husarion/aiil_workspace/humble_workspace/src/aiil_oakd/config/oakd.yaml:/oakd.yaml
+      - /home/husarion/aiil_workspace/humble_workspace/src/aiil_oakd/launch/camera.launch.py:/ros2_ws/install/depthai_ros_driver/share/depthai_ros_driver/launch/camera.launch.py
     device_cgroup_rules:
       - 'c 189:* rmw'
     command: >
-      ros2 launch depthai_ros_driver rgbd_pcl.launch.py 
+      ros2 launch depthai_ros_driver camera.launch.py
         camera_model:=OAK-D-LITE
+        parent_frame:=camera_mount_link
         params_file:=/oakd.yaml
 #camera.launch.py
+#rgbd_pcl.launch.py 
  
   # slam_toolbox:
   #   image: husarion/slam-toolbox:humble
