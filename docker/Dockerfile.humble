@@ -25,6 +25,16 @@ RUN apt update && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install ROS Dev Tools
+RUN apt update && \
+    source /opt/ros/$ROS_DISTRO/setup.bash && \
+    apt install -y \
+        ros-dev-tools \
+        && \
+    apt autoremove -y && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install ROS2 Packages
 RUN apt update && \
     source /opt/ros/$ROS_DISTRO/setup.bash && \

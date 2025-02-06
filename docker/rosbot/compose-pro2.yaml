@@ -92,7 +92,7 @@ services:
     profiles: ["all"]
     # profiles: ["nav"]
     volumes:
-      - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/navigation.yaml:/nav2_params/params.yaml
+      - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/navigation_pro2.yaml:/nav2_params/params.yaml
       - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/aiil_simple_navigate.xml:/nav2_params/nav_bt.xml
     command: ros2 launch nav2_bringup navigation_launch.py params_file:=/nav2_params/params.yaml use_sim_time:=false
 

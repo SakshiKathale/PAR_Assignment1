@@ -102,34 +102,37 @@ services:
         camera_model:=OAK-D-LITE
         parent_frame:=camera_mount_link
         params_file:=/oakd.yaml
+        pointcloud.enable:=true
 #camera.launch.py
 #rgbd_pcl.launch.py 
  
-  # slam_toolbox:
-  #   image: husarion/slam-toolbox:humble
-  #   container_name: slam_toolbox
-  #   <<: *common-config
-  #   extends:
-  #     file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
-  #     service: slam_toolbox
-  #   profiles: ["all"]
-  #   volumes:
-  #     - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/slam.yaml:/slam_params/slam.yaml
-  #   command: ros2 launch slam_toolbox online_sync_launch.py slam_params_file:=/slam_params/slam.yaml use_sim_time:=false
+  slam_toolbox:
+    # image: husarion/slam-toolbox:humble
+    image: rmit/aiil_workspace
+    container_name: slam_toolbox
+    <<: *common-config
+    extends:
+      file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
+      service: slam_toolbox
+    profiles: ["all"]
+    volumes:
+      - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/slam.yaml:/slam_params/slam.yaml
+    command: ros2 launch slam_toolbox online_sync_launch.py slam_params_file:=/slam_params/slam.yaml use_sim_time:=false
 
-  # nav2:
-  #   image: husarion/navigation2:humble
-  #   container_name: nav2
-  #   extends:
-  #     file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
-  #     service: slam_toolbox
-  #   <<: *common-config
-  #   profiles: ["all"]
-  #   # profiles: ["nav"]
-  #   volumes:
-  #     - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/navigation.yaml:/nav2_params/params.yaml
-  #     - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/aiil_simple_navigate.xml:/nav2_params/nav_bt.xml
-  #   command: ros2 launch nav2_bringup navigation_launch.py params_file:=/nav2_params/params.yaml use_sim_time:=false
+  nav2:
+    # image: husarion/navigation2:humble
+    image: rmit/aiil_workspace
+    container_name: nav2
+    extends:
+      file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
+      service: slam_toolbox
+    <<: *common-config
+    profiles: ["all"]
+    # profiles: ["nav"]
+    volumes:
+      - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/navigation_pro3.yaml:/nav2_params/params.yaml
+      - /home/husarion/aiil_workspace/humble_workspace/src/aiil_rosbot_demo/config/aiil_simple_navigate.xml:/nav2_params/nav_bt.xml
+    command: ros2 launch nav2_bringup navigation_launch.py params_file:=/nav2_params/params.yaml use_sim_time:=false
 
   # RMIT workspace is not launched, just make a bash container
   rmit_aiilworkspace:
