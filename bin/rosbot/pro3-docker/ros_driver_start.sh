@@ -56,19 +56,19 @@ fi
 # Stop the Docker containers if they're running
 echo -e "\r\n${GREEN}[2/2]\r\nLaunching ROS 2 Driver${NC}"
 
-prefix="file://"
-if [[ $CYCLONEDDS_URI == "$prefix"* ]]; then
-    export CYCLONEDDS_PATH=${CYCLONEDDS_URI#file://}
-else
-    export CYCLONEDDS_PATH=""
-fi
+# prefix="file://"
+# if [[ $CYCLONEDDS_URI == "$prefix"* ]]; then
+#     export CYCLONEDDS_PATH=${CYCLONEDDS_URI#file://}
+# else
+#     export CYCLONEDDS_PATH=""
+# fi
 
 mkdir -p ~/.ros
 
 if [[ $1 == "all" ]]; then
     docker compose -f $COMPOSE_FILE --profile all up -d
 else
-    docker compose -f $COMPOSE_FILE up -d rosbot microros
+    docker compose -f $COMPOSE_FILE up -d microros rosbot
 fi
 
 sleep 3

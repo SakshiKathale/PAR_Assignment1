@@ -39,7 +39,9 @@
 					<origin xyz="0 0 0" rpy="0 0 0" />
 					<geometry>
 						<!-- <mesh filename="${file_prefix}/urdf/models/${model}.stl" /> -->
-						<mesh filename="package://rosbot_description/meshes/${model}.stl" />
+						<!-- <mesh filename="package://depthai_descriptions/urdf/models/${model}.stl" /> -->
+						<!-- <mesh filename="package://ros_components_description/meshes/zed2i.stl" /> -->
+						<mesh filename="https://raw.githubusercontent.com/luxonis/depthai-ros/humble/depthai_descriptions/urdf/models/${model}.stl" />
 					</geometry>
 					<material name="mat">
 						<color rgba="${r} ${g} ${b} ${a}" />
@@ -53,7 +55,9 @@
 					<origin xyz="0.019 0 0" rpy="0 0 0" />
 					<geometry>
 						<!-- <mesh filename="${file_prefix}/urdf/models/${model}.stl" /> -->
-						<mesh filename="package://rosbot_description/meshes/${model}.stl" />
+						<!-- <mesh filename="package://depthai_descriptions/urdf/models/${model}.stl" /> -->
+						<!-- <mesh filename="package://ros_components_description/meshes/zed2i.stl" /> -->
+						<mesh filename="https://raw.githubusercontent.com/luxonis/depthai-ros/humble/depthai_descriptions/urdf/models/${model}.stl" />
 					</geometry>
 					<material name="mat">
 						<color rgba="${r} ${g} ${b} ${a}" />
