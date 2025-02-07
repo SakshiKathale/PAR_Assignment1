@@ -33,6 +33,7 @@ from utils.grep import (
 import utils.shellEscape as shell
 import utils.snapinstall as snap
 import utils.sshscp as ssh
+import utils.wireless as wireless
 
 # Global Parameters
 fullSetupPath = os.path.abspath(__file__)
@@ -280,27 +281,10 @@ def setupHostsAliases(configRobots, configComputers):
         command = commandBase + " -g"
         shell.exec(command, hideOutput=False)
 
-def setupNetworks(configRobots):
-    print_status("Setting up Netplan Networks")
-    
-    npFile = configDir + "/rosbot/01-network-manager-all.yaml"
-    
-    # Sed command to replace ip
-    ip = configRobots[setupRobotName]["ip"]
-    command = f"sed -i 's/ROBOT_IP/{ip}/g' {npFile}"
-    shell.exec(command, hideOutput=False)
-    
-    # Copy netplan file
-    print_subitem("Copying netplan file - requires sudo")
-    npFolder = "/etc/netplan"
-    command = f"sudo cp {npFile} {npFolder}/."
-    shell.exec(command, hideOutput=False)
-    
-    # Update netplan
-    print_subitem("Updating Netplan - requires sudo")
-    print_warning("This will reset the network, remote terminals may be disconnected")
-    command = f"sudo netplan -d apply"
-    shell.exec(command, hideOutput=False)
+def setupNetworks(configRobots, configWireless):
+    print_status("Setting up Networks with set_wireless.py script")
+    profile = wireless.getDefaultProfile(configWireless)
+    wireless.setProfile(configRobots, configWireless, setupRobotName, profile)
     
 def setupRobotLocalFiles(configRobots):
     print_status("Configuring local robot files")
@@ -498,6 +482,7 @@ def _main_setup():
     configTCSoftware = config['TheConstruct']
     configRobots = cfg.loadConfigFile(configDir + "/robots.cfg")
     configComputers = cfg.loadConfigFile(configDir + "/computers.cfg")
+    configWireless = cfg.loadConfigFile(configDir + "/wireless.cfg")
     print_subitem("Configured Robots:")
     [print_subitem("\t* " + robot) for robot in cfg.getKeys(configRobots)]
     print_subitem("Configured Computers:")
@@ -596,7 +581,7 @@ def _main_setup():
         
         query = query_yes_no("(Robot only) Configure Netplan Networks?")
         if query:
-            setupNetworks(configRobots)
+            setupNetworks(configRobots, configWireless)
         print()
 
     # Configure Husarion Git Repositories
