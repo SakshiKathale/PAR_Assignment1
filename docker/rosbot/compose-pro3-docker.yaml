@@ -19,7 +19,7 @@ services:
       file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
       service: microros
     <<: *common-config
-    profiles: ["all"]
+    profiles: ["hardware", "all"]
     devices:
       # - ${SERIAL_PORT:?err}
       - /dev/ttyAMA0
@@ -46,7 +46,7 @@ services:
       file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
       service: rosbot
     <<: *common-config
-    profiles: ["all"]
+    profiles: ["hardware", "all"]
     volumes:
       - /home/husarion/aiil_workspace/husarion_workspace/pro3/rosbot_description/meshes:/ros2_ws/install/rosbot_description/share/rosbot_description/meshes
       - /home/husarion/aiil_workspace/husarion_workspace/pro3/rosbot_description/urdf:/ros2_ws/install/rosbot_description/share/rosbot_description/urdf
@@ -85,16 +85,19 @@ services:
   oakd:
     # image: husarion/depthai:humble-v2.10.3 <- has a udev rule issue
     image: husarion/depthai:humble-2.8.1
+    # image: rmit/aiil_workspace
     container_name: oakd
     extends:
       file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
       service: oakd
     <<: *common-config
+    profiles: ["all"]
     privileged: true
     volumes:
       - /dev/bus/usb:/dev/bus/usb
       - /home/husarion/aiil_workspace/humble_workspace/src/aiil_oakd/config/oakd.yaml:/oakd.yaml
       - /home/husarion/aiil_workspace/humble_workspace/src/aiil_oakd/launch/camera.launch.py:/ros2_ws/install/depthai_ros_driver/share/depthai_ros_driver/launch/camera.launch.py
+      # - /home/husarion/aiil_workspace/humble_workspace/src/aiil_oakd/launch/camera.launch.py:/opt/ros/humble/share/depthai_ros_driver/launch/camera.launch.py
     device_cgroup_rules:
       - 'c 189:* rmw'
     command: >

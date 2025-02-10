@@ -30,7 +30,6 @@
       i_tf_parent_frame: camera_mount_link
       i_usb_port_id: ''
       i_usb_speed: SUPER_PLUS
-      i_nn_type: none # none, mobilenet-ssd, yolo-v3-tiny, yolo-v3 # Disable NN
     diagnostic_updater:
       period: 1.0
     rgb:
@@ -128,7 +127,7 @@
       i_set_input_size: false
       i_socket_name: rgb
       i_stereo_conf_threshold: 240
-      i_subpixel: true  # originally false -> set to true
+      i_subpixel: false
       i_update_ros_base_time_on_ros_msg: false
       i_width: 1280
     use_sim_time: false

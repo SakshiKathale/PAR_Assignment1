@@ -13,8 +13,8 @@ class CmdVel(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('driveSpeed', 1.0),
-                ('rotateSpeed', 0.5)
+                ('driveSpeed', 2.0),
+                ('rotateSpeed', 1.0)
             ]
         )
         
@@ -26,7 +26,7 @@ class CmdVel(Node):
         self.topic = "/cmd_vel"
         self.pub = self.create_publisher(geometry_msgs.msg.Twist, self.topic, 10)
         
-        # Setup timer callback
+        # Timer callback
         self.timer = self.create_timer(2.0, self.transform)
     
     def transform(self):

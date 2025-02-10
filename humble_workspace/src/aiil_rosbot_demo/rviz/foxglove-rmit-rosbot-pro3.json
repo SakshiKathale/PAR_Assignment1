@@ -194,7 +194,12 @@
     },
     "RosOut!b0toow": {
       "searchTerms": [],
-      "minLogLevel": 2
+      "minLogLevel": 2,
+      "nameFilter": {
+        "foxglove_bridge": {
+          "visible": false
+        }
+      }
     },
     "Tab!3nagt3h": {
       "activeTabIdx": 0,

@@ -1,5 +1,5 @@
 
-# This base is copied to $AIIL_CHECKOUT_DIR/.basrhc by the build_setup script
+### This base is copied to $AIIL_CHECKOUT_DIR/.basrhc by the build_setup script ###
 
 # Aliases
 alias grep='grep --color=auto'
@@ -33,19 +33,29 @@ function rosenv() {
 }
 
 function set_ros_domain() {
+    ros2 daemon stop
     if [[ $# -eq 0 ]] ; then
         unset ROS_DOMAIN_ID
     else
         export ROS_DOMAIN_ID=`$AIIL_CHECKOUT_DIR/bin/get_robot_info.py -r $1 -i -q`
     fi
     echo "Setting: ROS_DOMAIN_ID=$ROS_DOMAIN_ID"
+    ros2 daemon start
 }
+
+# ROS Environment Variables
+export ROS_LOCALHOST_ONLY=0
 
 # Block setup.py waning
 export PYTHONWARNINGS="ignore:easy_install command is deprecated,ignore:setup.py install is deprecated"
 
-# Configure Cyclone DDS
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+# Configure DDS
+unset FASTRTPS_DEFAULT_PROFILES_FILE
+unset CYCLONEDDS_URI
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+# export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export FASTRTPS_DEFAULT_PROFILES_FILE=$AIIL_CHECKOUT_DIR/config/dds/rmit-fastrtps-dds.xml
+# export CYCLONEDDS_URI=file://$AIIL_CHECKOUT_DIR/config/dds/rmit-cyclone-dds.xml
 
 ######## ROS1 
 # ROS Parameter Settings
@@ -85,3 +95,5 @@ export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
 # Ensure root ROS is sourced
 source /opt/ros/humble/setup.bash
+
+#### END BASE ####

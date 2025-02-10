@@ -127,7 +127,9 @@ def installSnap(configRobots, configSnap):
     if query:
         ip = configRobots[setupRobotName]["ip"]
         snap.configure_snap_property("husarion-webui", "ros.domain-id", ip)
-        snap.configure_snap_property("husarion-webui", "ros.transport", "rmw_cyclonedds_cpp")
+        # snap.configure_snap_property("husarion-webui", "ros.transport", "rmw_cyclonedds_cpp")
+        # snap.configure_snap_property("husarion-webui", "ros.transport", "rmw_fastrtps_cpp")
+        snap.configure_snap_property("husarion-webui", "ros.transport", "udp")
     print()   
 
 def replaceAuthKeys():
@@ -154,6 +156,20 @@ def setupBash():
     # if setupRobot:
         # husDir = os.path.expanduser("~/" + cfg.husarion_workspace)
     
+    # Add ROSBot env variables to start of the bashrc
+    with open(rbbBashFile, "r+") as bashFile:
+        content = bashFile.read()
+        bashFile.seek(0, 0)
+        
+        bashFile.write("# ROSBot Environment Settings\n")
+        bashFile.write("export AIIL_CHECKOUT_DIR=" + AIIL_CHECKOUT_DIR + "\n")
+        bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
+        bashFile.write("export PATH=\"$AIIL_CHECKOUT_DIR/bin:$PATH\"\n")
+        bashFile.write("\n")
+        
+        # Append content back
+        bashFile.write(content)
+    
     # Append additional dynamic elements
     print_subitem("Updating " + rbbBashFile)
     bashFile = open(rbbBashFile, "a+")
@@ -162,10 +178,6 @@ def setupBash():
         bashFile.write("# SSH-Agent\n")
         bashFile.write("eval \"$(ssh-agent -s)\"\n")
     bashFile.write("\n")
-    bashFile.write("# ROSBot Environment Settings\n")
-    bashFile.write("export AIIL_CHECKOUT_DIR=" + AIIL_CHECKOUT_DIR + "\n")
-    bashFile.write("export HUSARION_CHECKOUT_DIR=" + husDir + "\n")
-    bashFile.write("export PATH=\"$AIIL_CHECKOUT_DIR/bin:$PATH\"\n")
     
     # Append ROS environment variables
     if setupRobot:

@@ -17,16 +17,19 @@ x-volumes-config:
     - /etc/passwd:/etc/passwd:ro                # *
     - /etc/shadow:/etc/shadow:ro                # *
     - /home/husarion/.ros:/home/husarion/.ros   # *
-    # - ${FASTRTPS_DEFAULT_PROFILES_FILE:-dummy_volume_fastdds}:${FASTRTPS_DEFAULT_PROFILES_FILE:-/dummy_volume_fastdds}:ro  # **
-    - ${CYCLONEDDS_PATH:-dummy_volume_cyclonedds}:${CYCLONEDDS_PATH:-/dummy_volume_cyclonedds}:ro                          # **
+    - ${FASTRTPS_DEFAULT_PROFILES_FILE:-dummy_volume_fastdds}:${FASTRTPS_DEFAULT_PROFILES_FILE:-/dummy_volume_fastdds}:ro  # **
+    # - ${CYCLONEDDS_PATH:-dummy_volume_cyclonedds}:${CYCLONEDDS_PATH:-/dummy_volume_cyclonedds}:ro                          # **
+    - /home/husarion/aiil_workspace/config/dds/rmit-fastrtps-dds.xml:/rmit-fastrtps-dds.xml
+    - /home/husarion/aiil_workspace/config/dds/rmit-cyclone-dds.xml:/rmit-cyclone-dds.xml
 
 x-environment-config:
   &common-environment
   environment:
     - RMW_IMPLEMENTATION              # ***
-    # - FASTRTPS_DEFAULT_PROFILES_FILE  # ***
-    - CYCLONEDDS_URI                  # ***
+    - FASTRTPS_DEFAULT_PROFILES_FILE  # ***
+    # - CYCLONEDDS_URI=file:///rmit-cyclone-dds.xml                  # ***
     - ROS_DOMAIN_ID                   # ***
+    - ROS_LOCALHOST_ONLY
     - USER                            # +
 
 

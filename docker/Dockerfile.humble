@@ -47,6 +47,14 @@ RUN apt update && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install ROS2 Packages - Depthai
+RUN apt update && \
+    source /opt/ros/$ROS_DISTRO/setup.bash && \
+    apt install -y \
+        ros-$ROS_DISTRO-depthai-ros && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
 ########################
 # Setup for workspace
 ARG ROS_DISTRO=humble
