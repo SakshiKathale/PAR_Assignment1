@@ -10,6 +10,7 @@ from utils.echo import (
     query_yes_no
 )
 import utils.shellEscape as shell
+import utils.snapinstall as snap
 import utils.sshscp as scp
 
 import argparse
@@ -36,6 +37,27 @@ def copy_json_files():
             src = os.path.join(src_dir, file)
             command = f"sudo cp {src} {dest}"
             shell.exec(command, hideOutput=False)
+
+def set_robot_ip(robotName):
+    print_status(f"Setting Foxglove WebUI to connect to robot: {robotName}")
+    configRobots = cfg.loadConfigFile(configDir + "/robots.cfg")
+    
+    # Check Robot Name is valid
+    ip = None
+    if robotName == 'default':
+        ip = "0"
+    elif robotName:
+        if not configRobots.has_section(robotName):
+            print_error("No Configuration parameters for robot: " + robotName)
+            exit()
+        ip = configRobots[robotName]["ip"]
+    
+    # Get Robot IP
+    print_subitem(f"Using IP: {ip}")
+    print_subitem(f"Changing snap properties may require sudo password")
+    
+    # Call snap set
+    snap.configure_snap_property("husarion-webui", "ros.domain-id", ip)
 
 def start_webui():
     print_status("Starting Foxglove WebUI...")
@@ -103,6 +125,7 @@ def choose_layout():
 def main():
     parser = argparse.ArgumentParser("Configure and use Foxglove WebUI with Husarion")
     parser.add_argument("--copy-json-files", "-c", action="store_true", help="Copy JSON foxglove files to the correct directory")
+    parser.add_argument("--robot", "-r", type=str, help="Robot to set Foxglove to connect to, or 'default' to use no domain id")
     parser.add_argument("--start", "-s", action="store_true", help="Start Husarion WebUI")
     parser.add_argument("--stop", "-t", action="store_true", help="Stop Husarion WebUI")
     parser.add_argument("--layout", "-l", action="store_true", help="Choose layout from the provided list")
@@ -113,6 +136,8 @@ def main():
     
     if args.copy_json_files:
         copy_json_files()
+    elif args.robot:
+        set_robot_ip(args.robot)
     elif args.start:
         start_webui()
     elif args.stop:

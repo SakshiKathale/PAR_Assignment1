@@ -103,11 +103,12 @@ def installSnap(configRobots, configSnap):
     query = query_yes_no("Install Snap package(s)")
     if query:
         # Remove existing snap (which causes conflict)
-        toRemove = [
-            'husarion.rosbot'
-        ]
-        for pkg in toRemove:
-            snap.remove_snap_package(pkg)
+        if setupRobot:
+            toRemove = [
+                'husarion.rosbot'
+            ]
+            for pkg in toRemove:
+                snap.remove_snap_package(pkg)
         
         # Install Snap packages
         for pkg in configSnap:
@@ -125,8 +126,10 @@ def installSnap(configRobots, configSnap):
     # Configure Snap packages
     query = query_yes_no("Configure Snap package properties")
     if query:
-        ip = configRobots[setupRobotName]["ip"]
-        snap.configure_snap_property("husarion-webui", "ros.domain-id", ip)
+        if setupRobot:
+            ip = configRobots[setupRobotName]["ip"]
+            snap.configure_snap_property("husarion-webui", "ros.domain-id", ip)
+        
         # snap.configure_snap_property("husarion-webui", "ros.transport", "rmw_cyclonedds_cpp")
         # snap.configure_snap_property("husarion-webui", "ros.transport", "rmw_fastrtps_cpp")
         snap.configure_snap_property("husarion-webui", "ros.transport", "udp")
@@ -540,15 +543,17 @@ def _main_setup():
                 installSoftware(configTCSoftware, ros=True, rosversion=rosversion, skipcheck=True)
             print()
 
-    # Snap packages (pro3 only)
-    if setupRobot:
+    # Snap packages
+    configSnap = None
+    if setupComp:
+        configSnap = config['Snap.computer']
+    elif setupRobot:
         husarionVersion = configRobots[setupRobotName]['husarion']
-        if husarionVersion == 'pro3-docker':
-            configSnap = config['Snap.' + husarionVersion]
-            query = query_yes_no("(Robot Pro3-Docker Only) Install and/or Configure Pro3 Snap packages for ROS2 Humble")
-            if query:
-                installSnap(configRobots, configSnap)
-            print()
+        configSnap = config['Snap.' + husarionVersion]
+    query = query_yes_no("Install and/or Configure Pro3 Snap packages for ROS2 Humble")
+    if query:
+        installSnap(configRobots, configSnap)
+    print()
 
     # Setup Git
     if setupComp:
