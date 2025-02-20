@@ -12,14 +12,18 @@ x-common-config:
 
 services:
 
+  # Switch to using microros bringup through husarion rosbot packages rather than mircoros agent package
+  #   There is a potential bug in the microros agent package that prevents the hardware relaunching
   microros:
-    image: husarion/micro-xrce-agent:v2.4.1
+    # image: husarion/micro-xrce-agent:v2.4.1
+    image: husarion/rosbot:humble-0.14.0-20250131
     container_name: microros
     extends:
       file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
       service: microros
     <<: *common-config
     profiles: ["hardware", "all"]
+    # profiles: ["microros"]
     devices:
       # - ${SERIAL_PORT:?err}
       - /dev/ttyAMA0
@@ -33,9 +37,11 @@ services:
       - SERIAL_PORT=/dev/ttyAMA0
       # - FASTRTPS_DEFAULT_PROFILES_FILE            # ***
       - XRCE_DOMAIN_ID_OVERRIDE=${ROS_DOMAIN_ID:-}  # ***
-    command: MicroXRCEAgent serial -D /dev/ttyAMA0 serial -b 576000
-
-# command: MicroXRCEAgent serial -D $SERIAL_PORT serial -b 576000 # <- this fails as it uses the 'native' serial_port env var not the container one
+    command: >
+      ros2 launch rosbot_bringup microros.launch.py
+      serial_port:=/dev/ttyAMA0
+# Micro ros bringup package
+#command: MicroXRCEAgent serial -D /dev/ttyAMA0 serial -b 576000
 
   rosbot:
     # image: husarion/rosbot:humble-0.13.1-20240207
@@ -153,6 +159,7 @@ services:
   # This container is specifically for initial setup of the ROSBot3 to flash firmware
   firmware_flash:
     image: husarion/rosbot:humble-0.14.0-20250131
+    # image: husarion/rosbot-xl:humble-0.10.0-20240216
     container_name: firmware_flash
     extends:
       file: /home/husarion/aiil_workspace/docker/rosbot/compose-common.yaml
