@@ -321,7 +321,8 @@ def setupRobotLocalFiles(configRobots):
         'remote_desktop_start.sh',
         'remote_desktop_stop.sh',
         'ros_driver_start.sh',
-        'ros_driver_stop.sh'
+        'ros_driver_stop.sh',
+        'foxglove-rosbot3.json'
     ]
     for file in toRemove:
         absFile = f"{rosbotHome}/{file}"
