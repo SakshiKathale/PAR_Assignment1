@@ -36,7 +36,7 @@ def catkin_init_husarion():
 Catkin script for initialising AIIL ROSBot
 '''
 def colcon_init_aiil():
-    return binDirectory() + "/catkin/colcon_init_aiil"
+    return binDirectory() + "/colcon/colcon_init_aiil"
 
 '''
 Catkin script for building husarion
@@ -48,7 +48,7 @@ def catkin_make_husarion():
 Catkin script for building AIIL ROSBot
 '''
 def colcon_make_aiil():
-    return binDirectory() + "/catkin/colcon_make_aiil"
+    return binDirectory() + "/colcon/colcon_make_aiil"
 
 '''
 Root directory of Codebase
