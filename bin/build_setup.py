@@ -99,26 +99,25 @@ def installSoftware(software, ros=False, rosversion='none', skipcheck=False):
 
 def installSnap(configRobots, configSnap):
     print_status("Configuring Snap")
-
-    # Fix snapd install for Pro2
-    if configRobots[setupRobotName]['husarion'] == 'pro2':
-        # Unmask snapd units
-        shell.exec('sudo systemctl unmask snapd.service')
-        shell.exec('sudo systemctl unmask snapd.socket')
-        shell.exec('sudo systemctl unmask snapd.seeded.service')
-
-        # Enable units to start automatically
-        shell.exec('sudo systemctl enable snapd.service')
-        shell.exec('sudo systemctl enable snapd.socket')
-        shell.exec('sudo systemctl enable snapd.seeded.service')
-
-        # Start snapd
-        shell.exec('sudo systemctl start snapd.service')
-        shell.exec('sudo systemctl start snapd.socket')
-        shell.exec('sudo systemctl start snapd.seeded.service')
-    
     query = query_yes_no("Install Snap package(s)")
     if query:
+        # Fix snapd install for Pro2
+        if configRobots[setupRobotName]['husarion'] == 'pro2':
+            # Unmask snapd units
+            shell.exec('sudo systemctl unmask snapd.service')
+            shell.exec('sudo systemctl unmask snapd.socket')
+            shell.exec('sudo systemctl unmask snapd.seeded.service')
+
+            # Enable units to start automatically
+            shell.exec('sudo systemctl enable snapd.service')
+            shell.exec('sudo systemctl enable snapd.socket')
+            shell.exec('sudo systemctl enable snapd.seeded.service')
+
+            # Start snapd
+            shell.exec('sudo systemctl start snapd.service')
+            shell.exec('sudo systemctl start snapd.socket')
+            shell.exec('sudo systemctl start snapd.seeded.service')
+
         # Remove existing snap (which causes conflict)
         if setupRobot:
             toRemove = [
